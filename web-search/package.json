@@ -1,0 +1,104 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "/tmp/d-117617-277-1js5n0t.bhvdrnewmi/package.tgz",
+        "scope": null,
+        "escapedName": null,
+        "name": null,
+        "rawSpec": "/tmp/d-117617-277-1js5n0t.bhvdrnewmi/package.tgz",
+        "spec": "/tmp/d-117617-277-1js5n0t.bhvdrnewmi/package.tgz",
+        "type": "local"
+      },
+      "/tmp/apm-install-dir-117617-277-1951i8j.cdnnfgk3xr"
+    ]
+  ],
+  "_from": "../d-117617-277-1js5n0t.bhvdrnewmi/package.tgz",
+  "_id": "web-search@0.3.3",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/web-search",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "/tmp/d-117617-277-1js5n0t.bhvdrnewmi/package.tgz",
+    "scope": null,
+    "escapedName": null,
+    "name": null,
+    "rawSpec": "/tmp/d-117617-277-1js5n0t.bhvdrnewmi/package.tgz",
+    "spec": "/tmp/d-117617-277-1js5n0t.bhvdrnewmi/package.tgz",
+    "type": "local"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "file:../d-117617-277-1js5n0t.bhvdrnewmi/package.tgz",
+  "_shasum": "8d8d8079e8f32404641a9010d028a423b352b8c9",
+  "_shrinkwrap": null,
+  "_spec": "/tmp/d-117617-277-1js5n0t.bhvdrnewmi/package.tgz",
+  "_where": "/tmp/apm-install-dir-117617-277-1951i8j.cdnnfgk3xr",
+  "activationCommands": {
+    "atom-workspace": "web-search:search"
+  },
+  "bugs": {
+    "url": "https://github.com/nobuhito/atom-web-search/issues"
+  },
+  "configSchema": {
+    "browser": {
+      "type": "object",
+      "properties": {
+        "position": {
+          "default": "right",
+          "type": "string",
+          "enum": [
+            "top",
+            "right",
+            "bottom",
+            "left"
+          ]
+        },
+        "size": {
+          "type": "integer",
+          "default": 450
+        },
+        "useragent": {
+          "type": "string",
+          "description": "default is iOS9 for iPhone.",
+          "default": "Mozilla/5.0 (iPhone; CPU iPhone OS 9_0 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13A344 Safari/601.1"
+        },
+        "styles": {
+          "type": "string",
+          "description": "Additional styles.",
+          "default": "*{font-family: Verdana, \"游ゴシック\", YuGothic, \"ヒラギノ角ゴ ProN W3\", \"Hiragino Kaku Gothic ProN\", \"メイリオ\", Meiryo, sans-serif !important;} /* http://www.dtp-transit.jp/misc/web/post_1881.html */"
+        }
+      }
+    },
+    "webservice": {
+      "type": "array",
+      "default": [
+        "http://google.com/search?q=$q$",
+        "http://wikipedia.org/wiki/$q$"
+      ]
+    }
+  },
+  "dependencies": {
+    "atom-space-pen-views": "^2.1.0"
+  },
+  "description": "Web search for Selected text in mobile view.",
+  "devDependencies": {},
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "homepage": "https://github.com/nobuhito/atom-web-search#readme",
+  "keywords": [],
+  "license": "MIT",
+  "main": "./lib/web-search",
+  "name": "web-search",
+  "optionalDependencies": {},
+  "readme": "# web-search package for Atom.\n\nWeb search for selected text in mobile device view.\n\n![screenshot](https://raw.githubusercontent.com/nobuhito/atom-web-search/master/screencast.gif)\n",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nobuhito/atom-web-search.git"
+  },
+  "version": "0.3.3"
+}
