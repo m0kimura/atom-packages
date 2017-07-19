@@ -1,0 +1,59 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "/tmp/d-117618-23035-109ebu.3hri8dunmi/package.tgz",
+        "scope": null,
+        "escapedName": null,
+        "name": null,
+        "rawSpec": "/tmp/d-117618-23035-109ebu.3hri8dunmi/package.tgz",
+        "spec": "/tmp/d-117618-23035-109ebu.3hri8dunmi/package.tgz",
+        "type": "local"
+      },
+      "/tmp/apm-install-dir-117618-23035-dngufs.y8boiuow29"
+    ]
+  ],
+  "_from": "../d-117618-23035-109ebu.3hri8dunmi/package.tgz",
+  "_id": "raml@0.2.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/raml",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "/tmp/d-117618-23035-109ebu.3hri8dunmi/package.tgz",
+    "scope": null,
+    "escapedName": null,
+    "name": null,
+    "rawSpec": "/tmp/d-117618-23035-109ebu.3hri8dunmi/package.tgz",
+    "spec": "/tmp/d-117618-23035-109ebu.3hri8dunmi/package.tgz",
+    "type": "local"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "file:../d-117618-23035-109ebu.3hri8dunmi/package.tgz",
+  "_shasum": "a4a31a90c794b7e1470e475a5889749e5fbaf4d7",
+  "_shrinkwrap": null,
+  "_spec": "/tmp/d-117618-23035-109ebu.3hri8dunmi/package.tgz",
+  "_where": "/tmp/apm-install-dir-117618-23035-dngufs.y8boiuow29",
+  "bugs": {
+    "url": "https://github.com/n4ch03/atom-raml/issues"
+  },
+  "dependencies": {},
+  "description": "RAML Package for ATOM",
+  "devDependencies": {},
+  "engines": {
+    "atom": ">0.50.0"
+  },
+  "homepage": "https://github.com/n4ch03/atom-raml#readme",
+  "license": "MIT",
+  "name": "raml",
+  "optionalDependencies": {},
+  "readme": "# ATOM RAML package\n\nA simple package for Atom (Github's text editor) that helps the user to write [RAML](http://raml.org/) specs.\n\n## Features:\n- Syntaxt Highlight.\n- Code Snippets (for http methods): just type the method and hit tab, for the snippet to automatically appear.\n\n## Installation\n- Open Atom.\n- Packages->Settings View->Install Packages\n- Type \"RAML\" in the Search box.\n- Select Install on the \"RAML - RAML Package for ATOM\" box.\n\nYou can also find other ways to install the package [here](http://joshbranchaud.com/blog/2014/02/27/Installing-Packages-In-Atom-Editor.html)\n\n## Status\nThis is a work in progress published and distributed under MIT license. Feel free to contribute by forking and pull-requests.\n",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/n4ch03/atom-raml.git"
+  },
+  "version": "0.2.0"
+}
