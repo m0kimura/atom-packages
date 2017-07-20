@@ -17,7 +17,6 @@ export const severityNames = {
   warning: 'Warning',
   info: 'Info',
 }
-export const WORKSPACE_URI = 'atom://linter-ui-default'
 
 export function $range(message: LinterMessage): ?Object {
   return message.version === 1 ? message.range : message.location.position
@@ -33,10 +32,6 @@ export function copySelection() {
 }
 export function getPathOfMessage(message: LinterMessage): string {
   return atom.project.relativizePath($file(message) || '')[1]
-}
-export function getActiveTextEditor(): ?TextEditor {
-  const paneItem = atom.workspace.getCenter().getActivePaneItem()
-  return atom.workspace.isTextEditor(paneItem) ? paneItem : null
 }
 
 export function getEditorsMap(editors: Editors): { editorsMap: Object, filePaths: Array<string> } {
@@ -81,16 +76,6 @@ export function filterMessagesByRangeOrPoint(messages: Set<LinterMessage> | Arra
   return filtered
 }
 
-export function openFile(file: string, position: ?Point) {
-  const options = {}
-  options.searchAllPanes = true
-  if (position) {
-    options.initialLine = position.row
-    options.initialColumn = position.column
-  }
-  atom.workspace.open(file, options)
-}
-
 export function visitMessage(message: LinterMessage, reference: boolean = false) {
   let messageFile
   let messagePosition
@@ -112,12 +97,32 @@ export function visitMessage(message: LinterMessage, reference: boolean = false)
       messagePosition = messageRange.start
     }
   }
-  if (messageFile) {
-    openFile(messageFile, messagePosition)
-  }
+  atom.workspace.open(messageFile, { searchAllPanes: true }).then(function() {
+    const textEditor = atom.workspace.getActiveTextEditor()
+    if (messagePosition && textEditor && textEditor.getPath() === messageFile) {
+      textEditor.setCursorBufferPosition(messagePosition)
+    }
+  })
 }
 
+// NOTE: Code Point 160 === &nbsp;
+const replacementRegex = new RegExp(String.fromCodePoint(160), 'g')
+export function htmlToText(html: any): string {
+  const element = document.createElement('div')
+  if (typeof html === 'string') {
+    element.innerHTML = html
+  } else {
+    element.appendChild(html.cloneNode(true))
+  }
+  // NOTE: Convert &nbsp; to regular whitespace
+  return element.textContent.replace(replacementRegex, ' ')
+}
 export function openExternally(message: LinterMessage): void {
+  if (message.version === 1 && message.type.toLowerCase() === 'trace') {
+    visitMessage(message)
+    return
+  }
+
   if (message.version === 2 && message.url) {
     shell.openExternal(message.url)
   }

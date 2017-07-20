@@ -1,6 +1,7 @@
 /* @flow */
 
 import React from 'react'
+import { openExternally } from '../helpers'
 import type TooltipDelegate from './delegate'
 import type { MessageLegacy } from '../types'
 
@@ -55,6 +56,9 @@ class MessageElement extends React.Component {
         { message.text }
       </span>
       {' '}
+      <a href="#" onClick={() => openExternally(message)}>
+        <span className="icon icon-link linter-icon" />
+      </a>
     </linter-message>)
   }
 

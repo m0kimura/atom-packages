@@ -22,24 +22,13 @@ module.exports = class DiffView {
    * Adds highlighting to the editors to show the diff.
    *
    * @param diff The diff to highlight.
-   * @param addedColorSide The side that the added highlights should be applied to. Either 'left' or 'right'.
+   * @param leftHighlightType The type of highlight (ex: 'added').
+   * @param rightHighlightType The type of highlight (ex: 'removed').
    * @param isWordDiffEnabled Whether differences between words per line should be highlighted.
    * @param isWhitespaceIgnored Whether whitespace should be ignored.
-   * @param useCustomStyle Whether to use the user's customized highlight colors.
    */
-  displayDiff(diff, addedColorSide, isWordDiffEnabled, isWhitespaceIgnored, useCustomStyle) {
+  displayDiff(diff, leftHighlightType, rightHighlightType, isWordDiffEnabled, isWhitespaceIgnored) {
     this._chunks = diff.chunks || [];
-
-    var leftHighlightType = 'added';
-    var rightHighlightType = 'removed';
-    if(addedColorSide == 'right') {
-      leftHighlightType = 'removed';
-      rightHighlightType = 'added';
-    }
-    if(useCustomStyle) {
-      leftHighlightType += '-custom';
-      rightHighlightType += '-custom';
-    }
 
     // make the last chunk equal size on both screens so the editors retain sync scroll #58
     if(this.getNumDifferences() > 0) {

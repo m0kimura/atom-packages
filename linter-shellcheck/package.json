@@ -2,40 +2,40 @@
   "_args": [
     [
       {
-        "raw": "/tmp/d-117617-1311-8xcdxy.wokb0m5cdi/package.tgz",
+        "raw": "/tmp/d-117620-9015-pa00kl.4uo5pzaor/package.tgz",
         "scope": null,
         "escapedName": null,
         "name": null,
-        "rawSpec": "/tmp/d-117617-1311-8xcdxy.wokb0m5cdi/package.tgz",
-        "spec": "/tmp/d-117617-1311-8xcdxy.wokb0m5cdi/package.tgz",
+        "rawSpec": "/tmp/d-117620-9015-pa00kl.4uo5pzaor/package.tgz",
+        "spec": "/tmp/d-117620-9015-pa00kl.4uo5pzaor/package.tgz",
         "type": "local"
       },
-      "/tmp/apm-install-dir-117617-1311-12p1dhm.ssy3qh0k9"
+      "/tmp/apm-install-dir-117620-9015-1kp9rlz.k1dqgp66r"
     ]
   ],
-  "_from": "../d-117617-1311-8xcdxy.wokb0m5cdi/package.tgz",
+  "_from": "../d-117620-9015-pa00kl.4uo5pzaor/package.tgz",
   "_id": "linter-shellcheck@1.4.4",
   "_inCache": true,
   "_installable": true,
   "_location": "/linter-shellcheck",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "/tmp/d-117617-1311-8xcdxy.wokb0m5cdi/package.tgz",
+    "raw": "/tmp/d-117620-9015-pa00kl.4uo5pzaor/package.tgz",
     "scope": null,
     "escapedName": null,
     "name": null,
-    "rawSpec": "/tmp/d-117617-1311-8xcdxy.wokb0m5cdi/package.tgz",
-    "spec": "/tmp/d-117617-1311-8xcdxy.wokb0m5cdi/package.tgz",
+    "rawSpec": "/tmp/d-117620-9015-pa00kl.4uo5pzaor/package.tgz",
+    "spec": "/tmp/d-117620-9015-pa00kl.4uo5pzaor/package.tgz",
     "type": "local"
   },
   "_requiredBy": [
     "#USER"
   ],
-  "_resolved": "file:../d-117617-1311-8xcdxy.wokb0m5cdi/package.tgz",
+  "_resolved": "file:../d-117620-9015-pa00kl.4uo5pzaor/package.tgz",
   "_shasum": "d297a23b15118a7ba53d1d6d76d5d63b69018b68",
   "_shrinkwrap": null,
-  "_spec": "/tmp/d-117617-1311-8xcdxy.wokb0m5cdi/package.tgz",
-  "_where": "/tmp/apm-install-dir-117617-1311-12p1dhm.ssy3qh0k9",
+  "_spec": "/tmp/d-117620-9015-pa00kl.4uo5pzaor/package.tgz",
+  "_where": "/tmp/apm-install-dir-117620-9015-1kp9rlz.k1dqgp66r",
   "activationHooks": [
     "language-shellscript:grammar-used"
   ],

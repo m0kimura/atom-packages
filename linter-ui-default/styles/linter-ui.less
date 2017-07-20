@@ -15,24 +15,14 @@
   margin-top: 3px;
 
   .message-with-severity(@color) {
-    color: @text-color;
-    background-color: @inset-panel-background-color;
-
-    border-left: 8px solid @color;
-    border-right: 1px solid fade(contrast(@inset-panel-background-color), 5%);
-    &:first-child {
-      border-top: 1px solid fade(contrast(@inset-panel-background-color), 5%);
-    }
-    &:last-child {
-      border-bottom: 1px solid fade(contrast(@inset-panel-background-color), 5%);
-    }
-
+    color: contrast(@color);
+    background-color: @color;
     &:last-child::before {
       border-color: transparent transparent @color @color;
     }
 
     a {
-      color: @text-color;
+      color: contrast(@color);
     }
   }
 
@@ -140,12 +130,17 @@ atom-text-editor.editor .linter-highlight, .linter-highlight {
 }
 
 .linter-status-count {
-  a {
-    padding: 2px;
+  span {
+    border-radius: 0px;
+    padding: 4px 6px;
   }
-  span.icon::before {
-    font-size: 12px;
-    vertical-align: middle;
+  span:first-child {
+    border-top-left-radius: @component-border-radius;
+    border-bottom-left-radius: @component-border-radius;
+  }
+  span:last-child {
+    border-top-right-radius: @component-border-radius;
+    border-bottom-right-radius: @component-border-radius;
   }
   &.hide-config, &.hide-pane {
     display: none;

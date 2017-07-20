@@ -1,9 +1,8 @@
 /* @flow */
 
-import invariant from 'assert'
 import { CompositeDisposable } from 'atom'
 
-import { $file, $range, getActiveTextEditor, visitMessage, sortMessages, sortSolutions, filterMessages, applySolution } from './helpers'
+import { $file, $range, visitMessage, sortMessages, sortSolutions, filterMessages, applySolution } from './helpers'
 import type { LinterMessage } from './types'
 
 class Commands {
@@ -57,8 +56,7 @@ class Commands {
   }
   // NOTE: Apply solutions from bottom to top, so they don't invalidate each other
   applyAllSolutions(): void {
-    const textEditor = getActiveTextEditor()
-    invariant(textEditor, 'textEditor was null on a command supposed to run on text-editors only')
+    const textEditor = atom.workspace.getActiveTextEditor()
     const messages = sortMessages([{ column: 'line', type: 'desc' }], filterMessages(this.messages, textEditor.getPath()))
     messages.forEach(function(message) {
       if (message.version === 1 && message.fix) {
@@ -69,7 +67,7 @@ class Commands {
     })
   }
   move(forward: boolean, globally: boolean, severity: ?string = null): void {
-    const currentEditor = getActiveTextEditor()
+    const currentEditor = atom.workspace.getActiveTextEditor()
     const currentFile: any = (currentEditor && currentEditor.getPath()) || NaN
     // NOTE: ^ Setting default to NaN so it won't match empty file paths in messages
     const messages = sortMessages([{ column: 'file', type: 'asc' }, { column: 'line', type: 'asc' }], filterMessages(this.messages, globally ? null : currentFile, severity))

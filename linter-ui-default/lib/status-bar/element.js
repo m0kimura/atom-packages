@@ -3,8 +3,6 @@
 import { CompositeDisposable, Emitter } from 'atom'
 import type { Disposable } from 'atom'
 
-import * as Helpers from './helpers'
-
 class Element {
   item: HTMLElement;
   itemErrors: HTMLElement;
@@ -16,9 +14,9 @@ class Element {
 
   constructor() {
     this.item = document.createElement('div')
-    this.itemErrors = Helpers.getElement('stop')
-    this.itemWarnings = Helpers.getElement('alert')
-    this.itemInfos = Helpers.getElement('info')
+    this.itemErrors = document.createElement('span')
+    this.itemWarnings = document.createElement('span')
+    this.itemInfos = document.createElement('span')
 
     this.emitter = new Emitter()
     this.subscriptions = new CompositeDisposable()
@@ -48,26 +46,32 @@ class Element {
     }
   }
   update(countErrors: number, countWarnings: number, countInfos: number): void {
-    this.itemErrors.childNodes[1].textContent = String(countErrors)
-    this.itemWarnings.childNodes[1].textContent = String(countWarnings)
-    this.itemInfos.childNodes[1].textContent = String(countInfos)
+    this.itemErrors.textContent = String(countErrors)
+    this.itemWarnings.textContent = String(countWarnings)
+    this.itemInfos.textContent = String(countInfos)
 
     if (countErrors) {
-      this.itemErrors.classList.add('text-error')
+      this.itemErrors.classList.remove('highlight')
+      this.itemErrors.classList.add('highlight-error')
     } else {
-      this.itemErrors.classList.remove('text-error')
+      this.itemErrors.classList.add('highlight')
+      this.itemErrors.classList.remove('highlight-error')
     }
 
     if (countWarnings) {
-      this.itemWarnings.classList.add('text-warning')
+      this.itemWarnings.classList.remove('highlight')
+      this.itemWarnings.classList.add('highlight-warning')
     } else {
-      this.itemWarnings.classList.remove('text-warning')
+      this.itemWarnings.classList.add('highlight')
+      this.itemWarnings.classList.remove('highlight-warning')
     }
 
     if (countInfos) {
-      this.itemInfos.classList.add('text-info')
+      this.itemInfos.classList.remove('highlight')
+      this.itemInfos.classList.add('highlight-info')
     } else {
-      this.itemInfos.classList.remove('text-info')
+      this.itemInfos.classList.add('highlight')
+      this.itemInfos.classList.remove('highlight-info')
     }
   }
   onDidClick(callback: ((type: string) => void)): Disposable {

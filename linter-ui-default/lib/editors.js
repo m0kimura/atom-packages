@@ -21,13 +21,6 @@ class Editors {
     this.subscriptions.add(atom.workspace.observeTextEditors((textEditor) => {
       this.getEditor(textEditor)
     }))
-    this.subscriptions.add(atom.workspace.getCenter().observeActivePaneItem((paneItem) => {
-      this.editors.forEach((editor) => {
-        if (editor.textEditor !== paneItem) {
-          editor.removeTooltip()
-        }
-      })
-    }))
   }
   isFirstRender(): boolean {
     return this.firstRender
