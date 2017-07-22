@@ -1,0 +1,21 @@
+'context-menu':
+  'atom-text-editor': [
+    {
+      'label': 'Sourcerer: Find source code for selection'
+      'command': 'sourcerer:fetch'
+    }
+  ]
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'Sourcerer'
+      'submenu': [
+        {
+          'label': 'Find source code for selection'
+          'command': 'sourcerer:fetch'
+        }
+      ]
+    ]
+  }
+]

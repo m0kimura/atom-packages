@@ -1,0 +1,73 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "/tmp/d-117621-7258-1532m1z.m0cizwu3di/package.tgz",
+        "scope": null,
+        "escapedName": null,
+        "name": null,
+        "rawSpec": "/tmp/d-117621-7258-1532m1z.m0cizwu3di/package.tgz",
+        "spec": "/tmp/d-117621-7258-1532m1z.m0cizwu3di/package.tgz",
+        "type": "local"
+      },
+      "/tmp/apm-install-dir-117621-7258-1fdwd9c.0cezqzd7vi"
+    ]
+  ],
+  "_from": "../d-117621-7258-1532m1z.m0cizwu3di/package.tgz",
+  "_id": "sourcerer@2.0.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/sourcerer",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "/tmp/d-117621-7258-1532m1z.m0cizwu3di/package.tgz",
+    "scope": null,
+    "escapedName": null,
+    "name": null,
+    "rawSpec": "/tmp/d-117621-7258-1532m1z.m0cizwu3di/package.tgz",
+    "spec": "/tmp/d-117621-7258-1532m1z.m0cizwu3di/package.tgz",
+    "type": "local"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "file:../d-117621-7258-1532m1z.m0cizwu3di/package.tgz",
+  "_shasum": "2648c8ff77602ac994f922e402fec0e4ee7d56e1",
+  "_shrinkwrap": null,
+  "_spec": "/tmp/d-117621-7258-1532m1z.m0cizwu3di/package.tgz",
+  "_where": "/tmp/apm-install-dir-117621-7258-1fdwd9c.0cezqzd7vi",
+  "activationCommands": {
+    "atom-workspace": "sourcerer:fetch"
+  },
+  "bugs": {
+    "url": "https://github.com/nicktikhonov/sourcerer/issues"
+  },
+  "dependencies": {
+    "atom-space-pen-views": "^2.0.3",
+    "cheerio": "^0.20.0",
+    "google": ">=2.0.0",
+    "request": "^2.72.0"
+  },
+  "description": "Find StackOverflow code snippets relevant to your problem with alt-s.",
+  "devDependencies": {},
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "homepage": "https://github.com/nicktikhonov/sourcerer#readme",
+  "keywords": [
+    "StackOverflow",
+    "code",
+    "snippets"
+  ],
+  "license": "MIT",
+  "main": "./lib/sourcerer",
+  "name": "sourcerer",
+  "optionalDependencies": {},
+  "readme": "Sourcerer\n=========================\n\nAtom plugin for quickly finding and using StackOverflow code snippets. \n\n![](/screenshots/sourcerer.gif)\n\nFind and use code snippets relevant to your problem. Replace routine StackOverflow searching with a simple interface for searching and browsing the largest code snippet collection on the internet :)\n\n## Usage\n\n* [Install Sourcerer](https://atom.io/packages/Sourcerer)\n* Write and select a problem description, e.g. 'fizzbuzz implementation' or 'quicksort'\n* Hit __alt-s__\n* View and insert relevant StackOverflow code snippets!\n\n## Features\n* Searches stackoverflow questions using Google\n* Scrapes pages and filters accepted answers + those with a large number of votes\n* \"I'm feeling lucky\" mode - automatically insert the best found answer\n* Inserts StackOverflow answer text as comments (for context)\n* Automatically cites inserted snippets with the author's username\n",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicktikhonov/sourcerer.git"
+  },
+  "version": "2.0.0"
+}

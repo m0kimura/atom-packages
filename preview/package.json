@@ -1,0 +1,120 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "/tmp/d-117621-24912-l91m1e.4eja4w8kt9/package.tgz",
+        "scope": null,
+        "escapedName": null,
+        "name": null,
+        "rawSpec": "/tmp/d-117621-24912-l91m1e.4eja4w8kt9/package.tgz",
+        "spec": "/tmp/d-117621-24912-l91m1e.4eja4w8kt9/package.tgz",
+        "type": "local"
+      },
+      "/tmp/apm-install-dir-117621-24912-utxdxq.9hyn20ggb9"
+    ]
+  ],
+  "_from": "../d-117621-24912-l91m1e.4eja4w8kt9/package.tgz",
+  "_id": "preview@0.17.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/preview",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "/tmp/d-117621-24912-l91m1e.4eja4w8kt9/package.tgz",
+    "scope": null,
+    "escapedName": null,
+    "name": null,
+    "rawSpec": "/tmp/d-117621-24912-l91m1e.4eja4w8kt9/package.tgz",
+    "spec": "/tmp/d-117621-24912-l91m1e.4eja4w8kt9/package.tgz",
+    "type": "local"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "file:../d-117621-24912-l91m1e.4eja4w8kt9/package.tgz",
+  "_shasum": "a663ce28b3bf79729ebb67d67cdd4ad7d0db100f",
+  "_shrinkwrap": null,
+  "_spec": "/tmp/d-117621-24912-l91m1e.4eja4w8kt9/package.tgz",
+  "_where": "/tmp/apm-install-dir-117621-24912-utxdxq.9hyn20ggb9",
+  "activationCommands": {
+    "atom-text-editor": "preview:toggle"
+  },
+  "author": {
+    "name": "Glavin Wiechert",
+    "email": "glavin.wiechert@gmail.com",
+    "url": "https://github.com/Glavin001"
+  },
+  "bugs": {
+    "url": "https://github.com/Glavin001/atom-preview/issues"
+  },
+  "contributors": [
+    {
+      "name": "ddavison",
+      "email": "sircapsalot@gmail.com",
+      "url": "https://github.com/ddavison"
+    }
+  ],
+  "dependencies": {
+    "analytics-node": "^2.1.0",
+    "atom-space-pen-views": "^2.2.0",
+    "babel-core": "^6.7.7",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-preset-stage-1": "^6.5.0",
+    "babel-preset-stage-2": "^6.5.0",
+    "babel-preset-stage-3": "^6.5.0",
+    "clear-require": "^1.0.1",
+    "coffee-react": "^5.0.0",
+    "coffee-script": "^1.10.0",
+    "dogeon": "^1.0.0",
+    "dogescript": "^2.3.0",
+    "ember-script": "0.0.14",
+    "jade": "^1.4.2",
+    "js-yaml": "^3.6.0",
+    "less": "^2.6.1",
+    "livescript": "^1.4.0",
+    "loophole": "^1.0.0",
+    "ng-classify": "^4.0.2",
+    "node-uuid": "^1.4.7",
+    "pug": "^2.0.0-alpha6",
+    "stylus": "^0.54.2",
+    "temp": "^0.8.1",
+    "typescript": "^2.0.3",
+    "underscore-plus": "^1.5.0"
+  },
+  "description": "Ultimate previewer of source code in Atom.",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-apm": "1.0.1",
+    "grunt-coffeelint": "0.0.8",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-lesslint": "~1.0.0"
+  },
+  "engines": {
+    "atom": ">0.50.0"
+  },
+  "homepage": "https://github.com/Glavin001/atom-preview",
+  "keywords": [
+    "preview",
+    "coffeescript",
+    "less",
+    "jade",
+    "ng-classify"
+  ],
+  "license": "MIT",
+  "main": "lib/preview",
+  "name": "preview",
+  "optionalDependencies": {},
+  "private": true,
+  "readme": "# [Preview for Atom](https://github.com/Glavin001/atom-preview)\n\n> Ultimate previewer of source code in Atom.\n\n[![Gitter chat](https://badges.gitter.im/Glavin001/atom-preview.png)](https://gitter.im/Glavin001/atom-preview)\n\n[![star this repo](http://githubbadges.com/star.svg?user=Glavin001&repo=atom-preview&background=007ec6&style=flat)](http://github.com/Glavin001/atom-preview)\n[![fork this repo](http://githubbadges.com/fork.svg?user=Glavin001&repo=atom-preview&background=007ec6&style=flat)](http://github.com/Glavin001/atom-preview/fork)\n\nAtom Package: https://atom.io/packages/preview\n\n```bash\napm install preview\n```\n\nOr Settings/Preferences ➔ Packages ➔ Search for `preview`\n\n## Features\n\n- [x] Preview source code in compiled form in separate tab\n- [x] Live updating of preview\n- [x] Shows loading and error messages\n- [x] [Updates on Tab Change](https://github.com/Glavin001/atom-coffeescript-preview/issues/3)\n- [x] [Highlights using active Atom theme](https://github.com/Glavin001/atom-coffeescript-preview/issues/5)\n- [x] [Users can manually change the default preview renderer](https://github.com/Glavin001/atom-preview/issues/22)\n- [x] [SpacePen Views can live preview!](https://github.com/Glavin001/atom-preview/issues/47)\n\n## Supported Languages\n\n- [x] [CoffeeScript](https://github.com/Glavin001/atom-preview/issues/1)\n- [x] [Literate CoffeeScript](https://github.com/Glavin001/atom-preview/pull/18)\n- [x] [LESS](https://github.com/Glavin001/atom-preview/issues/2)\n- [x] [Jade](https://github.com/Glavin001/atom-preview/issues/8)\n- [x] [DogeScript](https://github.com/Glavin001/atom-preview/issues/12)\n- [x] [TypeScript](https://github.com/Glavin001/atom-preview/issues/5)\n- [x] [Stylus](https://github.com/Glavin001/atom-preview/issues/21)\n- [x] [DSON](https://github.com/Glavin001/atom-preview/issues/13)\n- [x] [React (JSX)](https://github.com/Glavin001/atom-preview/issues/41)\n- [x] [EmberScript](https://github.com/Glavin001/atom-preview/issues/39)\n- [x] [ng-classify](https://github.com/Glavin001/atom-preview/issues/60)\n- [x] [LiveScript](https://github.com/Glavin001/atom-preview/issues/89)\n- [ ] [SASS](https://github.com/Glavin001/atom-preview/issues/3)\n- [ ] [Markdown](https://github.com/Glavin001/atom-preview/issues/7)\n- [ ] [Haml](https://github.com/Glavin001/atom-preview/issues/9)\n- [ ] [ClojureScript](https://github.com/Glavin001/atom-preview/issues/15)\n- [ ] [Dart](https://github.com/Glavin001/atom-preview/issues/14)\n\n## Package Settings\n\n- `Refresh Debounce Period` (milliseconds) -\nSet the debounce rate for preview refreshing.\nFor instance, if you type or switch tabs,\nhow long of a pause before the preview refreshes.\n- `Update On Tab Change` (boolean) -\nShould the preview update to the currently active tab?\n\n## Screenshots\n\n### Preview CoffeeScript as JavaScript\n\n![screenshot](https://raw.githubusercontent.com/Glavin001/atom-coffeescript-preview/master/screenshot.png)\n\n### Syncing with Tab Changes\n\n![screencapture](https://cloud.githubusercontent.com/assets/1885333/3576573/99212e10-0b93-11e4-8cd5-9da29e9230dd.gif)\n\n\n[npm]: https://www.npmjs.org/package/generator-atom-package\n[atom-doc]: https://atom.io/docs/latest/creating-a-package \"Official documentation\"\n",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Glavin001/atom-preview.git"
+  },
+  "scripts": {
+    "test": "grunt"
+  },
+  "version": "0.17.0"
+}
