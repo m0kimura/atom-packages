@@ -1,0 +1,5 @@
+'context-menu':
+  'プロジェクト環境': [
+    {label: 'コピー', command: 'run:copy'}
+    {type: 'separator'}
+  ]

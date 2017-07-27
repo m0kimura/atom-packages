@@ -1,5 +1,0 @@
-# Force text to have LF for EoL
-* text eol=lf
-
-# Mark GIF as binary
-*.gif binary
