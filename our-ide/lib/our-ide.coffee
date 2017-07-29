@@ -107,7 +107,7 @@ class OurIde
   show: () ->
     home = process.env.HOME
     menus = @getJson(home + '/.atom/our-ide.json')
-    view = new OurIdeView(menus)
+    view = new OurIdeView(menus.main)
   ##
 
   run: (selection) ->
