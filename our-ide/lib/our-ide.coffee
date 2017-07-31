@@ -117,6 +117,7 @@ class OurIde
       cmd = @commandFor(editor, selection)
     else
       cmd = @localexec(editor)
+      console.log('xx120', cmd)
       if cmd == 'exit'
         return
       else if cmd == ''
@@ -181,7 +182,7 @@ class OurIde
       return 'exe cordova build ' + part[6] + ' ' + part[3] +
        '/' + part[4]
     ##
-    switch @modifier(path)
+    switch @modifier(file)
 # page
       when 'page'
         if part[3] == 'www-kmrweb-net'
@@ -211,7 +212,7 @@ class OurIde
 # py
       when 'py'
         console.log('py')
-        return 'exe pythoncv ' + file + ' ' + path
+        return 'exe python ' + file + ' ' + path
       else
         atom.notifications.addError('拡張子が対象外です。')
         return false
@@ -244,6 +245,7 @@ class OurIde
     if editor.getPath()
       editor.save()
 #      args.push(editor.getPath()) if !selection
+    console.log("#{cmd}", cmd)
     splitCmd = cmd.split(/\s+/)
     if splitCmd.length > 1
       cmd = splitCmd[0]
