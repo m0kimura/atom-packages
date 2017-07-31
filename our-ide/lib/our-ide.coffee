@@ -155,45 +155,63 @@ class OurIde
   ##
 
   localexec: (editor) ->
-    path = editor.getPath()
-    folder = path.split('/')
-    if folder[3] == 'docker'
-      if folder[4] == 'include'
-        return 'dex build ' + folder[5]
+    pa = editor.getPath()
+    part = pa.split('/')
+    path = @pathpart(pa)
+    file = @filepart(pa)
+    console.log('#path')
+    console.log(pa)
+    console.log(part)
+    console.log(path)
+    console.log(file)
+#
+# ~/docker
+    if part[3] == 'docker'
+      if part[4] == 'include'
+        return 'dex build ' + part[5]
       else
         atom.notifications.addError('ビルドできません。')
         return 'exit'
       ##
-    else if folder[4] == 'cordova' or folder[5] == 'cordova'
-      return 'exe cordova build'
-    ####
+#
+# cordova
+    else if part[4] == 'cordova'
+      return 'exe cordova build ' + part[5] + ' ' + part[3]
+    else if part[5] == 'cordova'
+      return 'exe cordova build ' + part[6] + ' ' + part[3] +
+       '/' + part[4]
+    ##
     switch @modifier(path)
+# page
       when 'page'
-        if folder[3] == 'www-kmrweb-net'
-          if a.length == 5
-            b = folder[4].split('.')
+        if part[3] == 'www-kmrweb-net'
+          if part.length == 5
+            b = part[4].split('.')
             atom.workspace.open('http://localhost/' + b[0] + '.html')
             return 'exit'
           ##
-          if a.length == 6
+          if part.length == 6
             b = a[5].split('.')
             atom.workspace.open(
-              'http://localhost/' + a[4] + '/' + b[0] + '.html'
+              'http://localhost/' + part[4] + '/' + b[0] + '.html'
             )
             return 'exit'
           ##
           atom.notifications.addError('実行できません。')
           return 'exit'
         ##
+# js
       when 'js'
         console.log('js')
-        return ''
+        return 'exe node ' + file + ' ' + path
+# sh
       when 'sh'
         console.log('sh')
-        return ''
+        return 'exe shell ' + file + ' ' + path
+# py
       when 'py'
         console.log('py')
-        return 'exe pythoncv'
+        return 'exe pythoncv ' + file + ' ' + path
       else
         atom.notifications.addError('拡張子が対象外です。')
         return false
@@ -225,20 +243,22 @@ class OurIde
     args = []
     if editor.getPath()
       editor.save()
-      args.push(editor.getPath()) if !selection
+#      args.push(editor.getPath()) if !selection
     splitCmd = cmd.split(/\s+/)
     if splitCmd.length > 1
       cmd = splitCmd[0]
       args = splitCmd.slice(1).concat(args)
     try
       dir = atom.project.getPaths()[0] || '.'
-      console.log(dir)
       try
         if not fs.statSync(dir).isDirectory()
           throw new Error("Bad dir")
       catch
         dir = '.'
       @child = spawn(cmd, args, cwd: dir)
+      console.log('#spawn')
+      console.log(cmd)
+      console.log(args)
       @timer = setInterval((-> view.appendFooter('.')), 750)
       currentPid = @child.pid
       @child.on 'error', (err) =>
@@ -356,7 +376,7 @@ class OurIde
   ##
 
   modifier: (x) ->
-    p = x.lastIndexOf('.')
+    p = @lastOf(x, '.')
     if p < 0
       return ''
     ##
@@ -365,7 +385,7 @@ class OurIde
   ##
 
   filepart: (x) ->
-    p = x.lastIndexOf('/')
+    p = @lastOf(x, '/')
     if p < 0
       return x;
     ##
@@ -374,7 +394,7 @@ class OurIde
   ##
 
   pathpart: (x) ->
-    p = x.lastIndexOf('/')
+    p = @lastOf(x, '/')
     if p<0
       return ''
     ##
