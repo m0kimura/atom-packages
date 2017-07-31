@@ -192,7 +192,7 @@ class OurIde
             return 'exit'
           ##
           if part.length == 6
-            b = a[5].split('.')
+            b = part[5].split('.')
             atom.workspace.open(
               'http://localhost/' + part[4] + '/' + b[0] + '.html'
             )
