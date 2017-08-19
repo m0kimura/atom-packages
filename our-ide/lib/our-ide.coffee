@@ -105,9 +105,11 @@ class OurIde
   ##
 
   show: () ->
+    editor = atom.workspace.getActiveTextEditor()
     home = process.env.HOME
     menus = @getJson(home + '/.atom/our-ide.json')
-    view = new OurIdeView(menus.main)
+    menu = @solveDepend(editor)
+    view = new OurIdeView(menus[menu])
   ##
 
   run: (selection) ->
@@ -158,7 +160,7 @@ class OurIde
   localexec: (editor) ->
     pa = editor.getPath()
     part = pa.split('/')
-    path = @pathpart(pa)
+    path = @userPath(part)
     file = @filepart(pa)
     console.log('#path')
     console.log(pa)
@@ -177,11 +179,35 @@ class OurIde
 #
 # cordova
     else if part[4] == 'cordova'
-      return 'exe cordova build ' + part[5] + ' ' + part[3]
+      return 'exe cordovaide ' + part[5] + ' ' + part[3] + ' build'
     else if part[5] == 'cordova'
-      return 'exe cordova build ' + part[6] + ' ' + part[3] +
-       '/' + part[4]
+      return 'exe cordovaide ' + part[6] + ' ' + part[3] +
+       '/' + part[4] + ' build'
     ##
+#
+# platformio
+    else if part[4] == 'platformio'
+      return 'exe platformio ' + part[5] + ' ' + part[3] + ' build'
+    else if part[5] == 'platformio'
+      return 'exe platformio ' + part[6] + ' ' + part[3] +
+       '/' + part[4] + ' build'
+    ##
+#
+# electron
+    else if part[4] == 'electron'
+      return 'exe electron ' + part[5] + ' ' + part[3]
+    else if part[5] == 'electron'
+      return 'exe electron ' + part[6] + ' ' + part[3] + '/' + part[4]
+    ##
+#
+# ino
+    else if part[4] == 'esp32'
+      return 'exe espidf ' + part[5] + ' ' + part[3]
+    else if part[5] == 'esp32'
+      return 'exe espidf ' + part[6] + ' ' + part[3] + '/' + part[4]
+    ##
+
+
     switch @modifier(file)
 # page
       when 'page'
@@ -208,15 +234,56 @@ class OurIde
 # sh
       when 'sh'
         console.log('sh')
-        return 'exe shell ' + file + ' ' + path
+        return pa
+# sh
+      when 'jse'
+        console.log('jse')
+        return pa
 # py
       when 'py'
         console.log('py')
         return 'exe python ' + file + ' ' + path
+# coffee
+      when 'coffee'
+        console.log('coffee')
+        return 'exe coffee ' + file + ' ' + path
+# aws
+      when 'aws'
+        console.log('aws')
+        return 'exe aws ' + file + ' ' + path
+# error
       else
         atom.notifications.addError('拡張子が対象外です。')
         return false
     ####
+  ##
+
+  solveDepend: (editor) ->
+    pa = editor.getPath()
+    part = pa.split('/')
+    path = @userPath(part)
+    file = @filepart(pa)
+#
+# ~/docker
+    if part[3] == 'docker'
+      return 'main'
+    ##
+#
+# cordova
+    else if part[4] == 'cordova'
+      return 'main'
+    else if part[5] == 'cordova'
+      return 'main'
+    ##
+#
+# platformio
+    else if part[4] == 'platformio'
+      return 'platformio'
+    else if part[5] == 'platformio'
+      return 'platformio'
+    else
+      return 'main'
+    ##
   ##
 
   stop: (view) ->
@@ -428,6 +495,21 @@ class OurIde
     catch e
       return false
     ##
+  ##
+  userPath: (a) ->
+    rc = ''
+    i = 0
+    s = ''
+    for x in a
+      if i > a.length - 2
+        return rc
+      if i > 2
+        rc = rc + s + x
+        s = '/'
+      ##
+      i++
+    ##
+    return rc
   ##
 ##
 module.exports = new OurIde

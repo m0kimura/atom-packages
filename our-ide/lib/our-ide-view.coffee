@@ -8,11 +8,12 @@ p = require('path')
 
 module.exports =
 class OurProjectView extends SelectListView
-  initialize: (menus)->
+  initialize: (menus, parms)->
 #    @menus = @getJson(home + '/.atom/our-ide.json')
     super
     @addClass('overlay from-top')
     @menus = menus
+    @parms = parms
     items = []
     for i of @menus
       items.push(@menus[i].title)
@@ -29,7 +30,8 @@ class OurProjectView extends SelectListView
 
   confirmed: (item, ix) ->
     for x in @menus
-
+      if x.title == 'キャンセル'
+        break
       if x.title == item
         @runcmd(x.command)
       ##
