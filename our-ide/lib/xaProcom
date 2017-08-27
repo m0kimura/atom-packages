@@ -1,0 +1,22 @@
+#!/bin/bash
+cmd=$1
+id=$2
+data=$3
+
+key=$PROCOM_KEY
+site="http://192.168.1.64:8088"
+##
+  if [[ $cmd = "ticket" ]]; then
+    curl -f "${site}/report/ticket?key=${key}&code=${id}"
+  elif [[ $cmd = "upload" ]]; then
+    curl -f -X POST "${site}/report/upload?key=${key}&code=${id}" \
+      -H 'Accept: application/json' \
+      -H 'Content-type: application/json' \
+      -d "${data}" \
+      -k
+  else
+    cmd
+    read -p "確認" x
+    exit ${x}
+  fi
+##

@@ -1,9 +1,11 @@
 {ConfigObserver} = require 'atom'
 
-spawn = require('child_process').spawn
+cp = require('child_process')
+spawn = cp.spawn
 fs = require('fs')
 url = require('url')
 p = require('path')
+cs = require('./csv-treat.js')
 
 OurIdeView = require './our-ide-view'
 OurRunnerView = require './our-runner-view'
@@ -11,15 +13,15 @@ OurRunnerView = require './our-runner-view'
 class OurIde
   config:
     showOutputWindow:
-      title: 'Show Output Pane'
-      description: 'Displays the output pane when running commands.'
+      title: '実行結果のペインへの表示'
+      description: 'コマンド実行時に結果をペインに表示するかどうかtrue/false'
       type: 'boolean'
       default: true
       order: 1
     ##
     paneSplitDirection:
-      title: 'Pane Split Direction'
-      description: 'The direction to split when opening the output pane.'
+      title: 'ペインの追加方向'
+      description: 'ペインを追加する場合の方向(選択)'
       type: 'string'
       default: 'Down'
       enum: ['Right', 'Down', 'Up', 'Left']
@@ -62,6 +64,9 @@ class OurIde
     console.debug('[our-ide]', args...)
   ##
 
+  consumeTablrModelsServiceV1: (api) ->
+    @CSVEditor = new api.CSVEditor()
+
   initEnv: ->
     if process.platform == 'darwin'
       [shell, out] = [process.env.SHELL || 'bash', '']
@@ -96,20 +101,70 @@ class OurIde
       @scopeMap = atom.config.get(@cfg.scope)
     atom.commands.add 'atom-workspace', 'our-ide:menu', => @show()
     atom.commands.add 'atom-workspace', 'our-ide:file', => @run(false)
+    atom.commands.add 'atom-workspace', 'our-ide:ticket', => @ticket()
+    atom.commands.add 'atom-workspace', 'our-ide:hours', => @hours()
     atom.commands.add 'atom-workspace', 'our-ide:selection', => @run(true)
     atom.commands.add 'atom-workspace', 'our-ide:stop', => @stop()
     atom.commands.add 'atom-workspace', 'our-ide:close', => @stopAndClose()
     atom.commands.add '.our-ide', 'run:copy', ->
       atom.clipboard.write(window.getSelection().toString())
     ##
+    home = process.env.HOME
+    @menus = @getJson(home + '/.atom/our-ide.json')
+    if @menus.automation
+      @automation()
+    ##
+  ##
+
+  automation: () ->
+    try
+      user = process.env.USER
+      home = process.env.HOME
+      dt = cp.execSync('./xaProcom automation userenv '+user)
+      dt = JSON.parse(dt)
+      ba = fs.readFileSync(home+'/.userenv')
+      ba = JSON.parse(ba)
+      bt = {}
+      f= 0; t = ba.indexOf('\n'); if t < 0 then t = ba.length
+      while f < ba.length
+        x = ba.substring(f, t); a=x.split('=')
+        if a[0]
+          bt[a[0]]=a[1]
+          f=t+1
+          t=ba.indexOf('\n', f); if t<0 then t=ba.length
+        ##
+      ##
+      out=''
+      for key, value in dt
+        out+=key+'='+value+'\n'
+      ##
+      for key, value in ba
+        if !dt[key]
+          out+=key+'='+value+'\n'
+        ##
+      ##
+      fs.writeFileSync(home+'/.userenv')
+      cp.execSync('source xsSetenv .userenv')
+      atom.notifications.addInfo('自動初期設定しました。')
+      dt = cp.execSync('./xaProcom automation xsAuto '+user)
+      out=''
+      dt = JSON.parse(dt)
+      for x in dt
+        out+=x+'\n'
+      ##
+      fs.writeFileSync(home+'/bin/xsAuto')
+      cp.execSync('chmod +x '+home+'/bin/xsAuto')
+      cp.exec('xsAuto')
+    catch e
+      atom.notifications.addError('自動初期処理ができませんでした。\n'+e)
+    ##
   ##
 
   show: () ->
     editor = atom.workspace.getActiveTextEditor()
     home = process.env.HOME
-    menus = @getJson(home + '/.atom/our-ide.json')
     menu = @solveDepend(editor)
-    view = new OurIdeView(menus[menu])
+    view = new OurIdeView(@menus[menu])
   ##
 
   run: (selection) ->
@@ -157,16 +212,27 @@ class OurIde
     @execute(cmd, editor, view, selection)
   ##
 
+  ticket: () ->
+    editor = atom.workspace.getActiveTextEditor()
+    pa = editor.getPath()
+    file = @filepart(pa)
+    url = cp.execSync('~/.atom/packages/our-ide/lib/xaProcom ticket '+file)
+    #atom.workspace.open(url.toString('utf8'))
+    cp.exec('xdg-open '+url)
+    return "exit"
+  ##
+
+  hours: () ->
+    hd = new cs()
+    path=hd.hours()
+    atom.workspace.open(path)
+  ##
+
   localexec: (editor) ->
     pa = editor.getPath()
     part = pa.split('/')
     path = @userPath(part)
     file = @filepart(pa)
-    console.log('#path')
-    console.log(pa)
-    console.log(part)
-    console.log(path)
-    console.log(file)
 #
 # ~/docker
     if part[3] == 'docker'
@@ -176,31 +242,31 @@ class OurIde
         atom.notifications.addError('ビルドできません。')
         return 'exit'
       ##
-#
-# cordova
+    #
+    # cordova
     else if part[4] == 'cordova'
       return 'exe cordovaide ' + part[5] + ' ' + part[3] + ' build'
     else if part[5] == 'cordova'
       return 'exe cordovaide ' + part[6] + ' ' + part[3] +
        '/' + part[4] + ' build'
     ##
-#
-# platformio
+    #
+    # platformio
     else if part[4] == 'platformio'
       return 'exe platformio ' + part[5] + ' ' + part[3] + ' build'
     else if part[5] == 'platformio'
       return 'exe platformio ' + part[6] + ' ' + part[3] +
        '/' + part[4] + ' build'
     ##
-#
-# electron
+    #
+    # electron
     else if part[4] == 'electron'
       return 'exe electron ' + part[5] + ' ' + part[3]
     else if part[5] == 'electron'
       return 'exe electron ' + part[6] + ' ' + part[3] + '/' + part[4]
     ##
-#
-# ino
+    #
+    # ino
     else if part[4] == 'esp32'
       return 'exe espidf ' + part[5] + ' ' + part[3]
     else if part[5] == 'esp32'
@@ -209,9 +275,9 @@ class OurIde
 
 
     switch @modifier(file)
-# page
+      # page
       when 'page'
-        if part[3] == 'www-kmrweb-net'
+        if part[3] == @menus.websource
           if part.length == 5
             b = part[4].split('.')
             atom.workspace.open('http://localhost/' + b[0] + '.html')
@@ -227,35 +293,75 @@ class OurIde
           atom.notifications.addError('実行できません。')
           return 'exit'
         ##
-# js
+      # js
       when 'js'
         console.log('js')
         return 'exe node ' + file + ' ' + path
-# sh
+      # sh
       when 'sh'
         console.log('sh')
         return pa
-# sh
+      # jse
       when 'jse'
         console.log('jse')
         return pa
-# py
+      # py
       when 'py'
         console.log('py')
         return 'exe python ' + file + ' ' + path
-# coffee
+      # coffee
       when 'coffee'
         console.log('coffee')
         return 'exe coffee ' + file + ' ' + path
-# aws
+      # aws
       when 'aws'
         console.log('aws')
         return 'exe aws ' + file + ' ' + path
-# error
+      when 'tsh'
+        a=@loadFile(pa)
+        p=editor.getCursorScreenPosition()
+        out=''; c=''
+        f=false
+        l=0
+        for x in a
+          console.log x
+        for x in a
+          l++
+          console.log('#329', l, x)
+          if l == p.row + 1
+            console.log('#330', l, p.row+1, x)
+            if x == 'do'
+              f=true
+              console.log('#334')
+            else
+              atom.notifications.addInfo('指定した行がdoではありません')
+            　return 'exit'
+            ##
+          else
+            console.log('#338', x, out)
+            if x == 'end'
+              f = false
+            ##
+            console.log('#342'+f)
+            if f
+              out=c+x; c=' && '
+              console.log('#342')
+            ##
+          ##
+        ##
+        console.log('#344')
+        if f
+          atom.notifications.addInfo('endマークがありません')
+        else
+          console.log '#342', out
+        console.log '#343'
+        return 'exit'
+      # error
       else
         atom.notifications.addError('拡張子が対象外です。')
-        return false
+        return 'exit'
     ####
+    return 'exit'
   ##
 
   solveDepend: (editor) ->
@@ -284,6 +390,7 @@ class OurIde
     else
       return 'main'
     ##
+    return false
   ##
 
   stop: (view) ->
@@ -510,6 +617,20 @@ class OurIde
       i++
     ##
     return rc
+  ##
+  loadFile: (path) ->
+    d=fs.readFileSync(path)
+    f=0
+    out=[]
+    x=' '+d
+    while f<d.length-1
+      t=x.indexOf('\n', f)
+      if t<0 then t=x.length-1
+      e=x.substring(f, t)
+      out.push(e)
+      f=t+1
+    ##
+    return out
   ##
 ##
 module.exports = new OurIde

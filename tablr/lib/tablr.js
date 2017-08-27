@@ -51,8 +51,8 @@ module.exports = {
       if (protocol !== 'tablr:') { return }
 
       switch (host) {
-        case 'large': return this.getLargeTable()
-        case 'small': return this.getSmallTable()
+      case 'large': return this.getLargeTable()
+      case 'small': return this.getSmallTable()
       }
     }))
 

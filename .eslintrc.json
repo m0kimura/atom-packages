@@ -1,0 +1,22 @@
+{
+  "env": {"browser": true, "es6": true, "jquery": true},
+  "extends": "eslint:recommended",
+  "globals": {
+    "document": true,
+    "require": true,
+    "module": true,
+    "process": true,
+    "Buffer": true,
+    "atom": true,
+    "global": true
+  },
+  "rules": {
+    "no-console": ["off"],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["warn", "single"],
+    "semi": ["off"],
+    "curly": 2,
+    "no-undef": 2,
+    "indent": ["warn", 2]
+  }
+}

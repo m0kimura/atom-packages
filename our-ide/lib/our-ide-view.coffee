@@ -33,7 +33,10 @@ class OurProjectView extends SelectListView
       if x.title == 'キャンセル'
         break
       if x.title == item
-        @runcmd(x.command)
+        if x.command
+          @runcmd(x)
+        else if x.procedure
+          @runproc(x)
       ##
     ##
     @panel.hide()
@@ -43,16 +46,23 @@ class OurProjectView extends SelectListView
     console.log("This view was cancelled")
   ##
 
-  runcmd: (cmd) ->
-    {pane, view} = @runnerView()
-    if not view?
-      view = new OurRunnerView('プロジェクト環境')
-      panes = atom.workspace.getPanes()
-      dir = 'Bottom'
-      dirfunc = @splitFuncs[dir] || @splitFuncDefault
-      pane = panes[panes.length - 1][dirfunc](view)
-    pane.activateItem(view)
-    @execute(cmd, view)
+  runcmd: (x) ->
+    if x.target
+      w = atom.views.getView(atom.workspace)
+      atom.commands.dispatch(w, x.cmd)
+    else
+      {pane, view} = @runnerView()
+      if not view?
+        view = new OurRunnerView('プロジェクト環境')
+        panes = atom.workspace.getPanes()
+        dir = 'Bottom'
+        dirfunc = @splitFuncs[dir] || @splitFuncDefault
+        pane = panes[panes.length - 1][dirfunc](view)
+      pane.activateItem(view)
+      @execute(x.cmd, view)
+    ##
+    atom.notifications.addInfo(x.title+'処理しました。')
+  ##
 
   splitFuncDefault: 'splitRight'
   splitFuncs:
@@ -70,6 +80,7 @@ class OurProjectView extends SelectListView
     if splitCmd.length > 1
       cmd = splitCmd[0]
       args = splitCmd.slice(1).concat(args)
+    ##
     try
       dir = atom.project.getPaths()[0] || '.'
       console.log(dir)
@@ -106,13 +117,36 @@ class OurProjectView extends SelectListView
       view.append(err.stack, 'stderr')
       view.scrollToBottom()
       @stop()
+    ##
     startTime = new Date
+
+  runproc: (x) ->
+    switch x.procedure
+      when 'test'
+        atom.notifications.addInfo(x.title+'処理しました。')
+      when 'template'
+        try
+          h = process.env.HOME
+          o = h+x.parameters[1]+x.parameters[0]
+          if ! fs.existsSync(o)
+            r = fs.createReadStream(h+'/テンプレート/'+x.parameters[0])
+            w = fs.createWriteStream(o)
+            r.pipe(w)
+          ##
+          atom.workspace.open(o)
+        catch e
+          atom.notifications.addError('ERROR:'+e)
+      ##
+    ##
+  ##
 
   runnerView: ->
     for pane in atom.workspace.getPanes()
       for view in pane.getItems()
         return {pane: pane, view: view} if view instanceof OurRunnerView
     {pane: null, view: null}
+  ##
+
   getJson: (fn) ->
     try
       rc = @getFs(fn)
@@ -123,6 +157,7 @@ class OurProjectView extends SelectListView
     catch e
       @error=e
   ##
+
   getFs: (fn) ->
     @error = ''
     if @isExist(fn)
@@ -133,6 +168,7 @@ class OurProjectView extends SelectListView
       return false
     ##
   ##
+
   isExist: (fn) ->
     try
       return fs.existsSync(fn)
