@@ -1,16 +1,41 @@
-const Cp=require('child-process');
+const Cp=require('child_process');
 const Fs=require('fs');
 module.exports=class ourLauncher {
 /**
  * コンストラクタ
  * @param  {String} user ユーザーID
  * @param  {String} home ホームパス
- * @return {Object}      Configオブジェクト
+ * @return {Void}        none
  * @constructor
  */
   constructor(user, home) {
-    this.User=user; this.Home=home;
+    /**
+     * ユーザーID
+     * @type {String}
+     */
+    this.User=user;
+    /**
+   * ホームパス
+   * @type {String}
+   */
+    this.Home=home;
+    /**
+   * 設定情報
+   * @type {Object}
+   */
     this.Config=this.getJson(home+'/.atom/our-ide.json');
+    /**
+   * エラー情報
+   * @type {String}
+   */
+    this.error='';
+  }
+/**
+ * 設定情報の取得
+ * @return {Object} 設定情報
+ * @method
+ */
+  getMenus() {
     return this.Config;
   }
 /**
@@ -20,27 +45,39 @@ module.exports=class ourLauncher {
  * @return {String}        実行コマンド
  * @method
  */
-  localexec(module) {
-    let me=this, pa=module, a, i, x;
+  localexec(fpath) {
+    let me=this, pa=fpath, a, i, x, dt, f, p;
     let part=pa.split('/');
     let spec=me.Config;
-//    let path=me.userPath(part);
     let file=me.filepart(pa);
-
+    f='';
+    if(part[3]==spec.websource){
+      console.log(part);
+      if(me.modifier(file)=='page'){
+        p=''; for(i=4; i<part.length-1; i++){p+='/'+part[i];}
+        return {'mode': 'atom', 'cmd': 'http://localhost'+p+'/'+me.upper(file)+'.html'};
+      }
+    }
     for(i in spec.path) {
       x=spec.path[i];
-      a=x.filter.split('/');
-      for(i in a){if(a[i]!='*' && a[i]!=part[i]) {
-        return me.expand(x.command);
-      }}
+      a=x.filter.split('/'); dt={};
+      f=x.command;
+      for(i in a){if(a[i]!='*' && a[i]!=part[i]) {f=''; break;}}
+      if(f){
+        for(i in a){dt['part'+i]=a[i];}
+        console.log('#58', me.modifier(file), x.filter);
+        return {'mode': 'cmd', 'cmd': me.expand(x.command, dt)};
+      }
     }
-
     for(i in spec.modifier) {
       x=spec.modifier[i];
-      if(me.modifier(file)==x.filter) {return me.expand(x.command);}
+      if(me.modifier(file)==x.filter) {
+        dt={'file': me.filepart(pa), 'path': me.pathpart(pa), 'fullpath': pa};
+        console.log('#64', me.modifier(file), x.filter);
+        return {'mode': 'cmd', 'cmd': me.expand(x.command, dt)};
+      }
     }
-
-    if(me.modifiler(file)=='tsh'){return me.templauncher(pa);}
+    return {'mode': '', 'cmd': ''};
   }
 /**
  * templauncher
@@ -53,25 +90,23 @@ module.exports=class ourLauncher {
   templauncher(path, pos) {
     let me=this, out='', c='', i, x, y;
     let a=this.loadFile(path);
+    console.log(a);
     let f=false;
     for(i in a) {
-      x=a[i], y=me.spacedelimit(x);
-      if(i==pos.row+1){
+      x=a[i], y=me.spacedelimit(x); if(!y){y[0]='';}
+      console.log(i, pos.row, y[0]);
+      if(i==pos.row){
+        if(y[0]=='atom'){return {'mode': 'atom', 'cmd': y[1]};}
         if(y[0]=='do'){f=true;}
-        else{return '指定した行がdoではありません';}
+        else{me.error='指定した行がdoではありません'; return {'mode': 'NG', 'cmd': ''};}
       }else{
-        if(y[0]=='end'){f=false; out+=c+'read -p "確認" x'; break;}
+        if(f && y[0]=='end'){f=false; break;}
         if(f){out+=c+x; c=' && ';}
       }
     }
-    me.error='';
-    try{
-      if(f){return 'endマークがありません';}
-      else{Cp.commands(out);}
-      return true;
-    }catch(e){
-      me.error=e; return false;
-    }
+    if(f){me.error='endマークがありません'; return {'mode': 'NG', 'cmd': ''};}
+    if(!out){me.error='コマンドがありません'; return {'mode': 'NG', 'cmd': ''};}
+    return {'mode': 'cmd', 'cmd': out};
   }
 /**
  * userenv
@@ -83,8 +118,8 @@ module.exports=class ourLauncher {
     let me=this, dt, ba, bt={}, f, t, x, a, rc;
     me.error='';
     try{
-      let user=process.env.USER;
-      let home=process.env.HOME;
+      let user=me.User;
+      let home=me.Home;
       dt=Cp.execSync('./xaProcom automation userenv '+user);
       dt=JSON.parse(dt);
       ba=Fs.readFileSync(home+'/.userenv');
@@ -115,8 +150,8 @@ module.exports=class ourLauncher {
  */
   autoexec() {
     let me=this, dt, x, out='';
-    let user=process.env.USER;
-    let home=process.env.HOME;
+    let user=me.User;
+    let home=me.Home;
     me.error='';
     try{
       dt=Cp.execSync('./xaProcom automation xsAuto '+user);
@@ -129,6 +164,32 @@ module.exports=class ourLauncher {
     }catch(e) {
       me.error=e; return false;
     }
+  }
+/**
+ * 状況依存メニューの編集
+ * @param  {String} path ファイルのパス
+ * @return {Array}       メニューオブジェクトの配列
+ * @method
+ */
+  solveDepend(path) {
+    let i, j, f, x, a, out=[];
+    let part=path.split('/');
+    for(i in this.Config.menu) {
+      x=this.Config.menu[i];
+      f='';
+      if(x.path){
+        a=x.path.split('/');
+        f=x.menu;
+        for(j in a){if(a[j]!='*' && a[j]!=part[j]){f=''; break;}}
+        if(f){break;}
+      }
+      if(f=='' && x.modifier){
+        if(x.modifier==this.pathpart(path)){f=x.menu; break;}
+      }
+    }
+    if(f){for(i in this.Config[f]) {out.push(this.Config[f][i]);}}
+    for(i in this.Config.main) {out.push(this.Config.main[i]);}
+    return out;
   }
 /**
  * lastOf
@@ -199,6 +260,11 @@ module.exports=class ourLauncher {
     let p=this.lastOf(x, '.');
     if(p<0){return '';}
     p++; return x.substr(p);
+  }
+  upper(x) {
+    let t=this.lastOf(x, '.'); if(t<0){t=x.length-1;}
+    let f=this.lastOf(x, '/'); if(f<0){f=0;}else{f=f+1;}
+    return x.substr(f, t);
   }
 /**
  * filepart
@@ -295,20 +361,64 @@ module.exports=class ourLauncher {
  * @method
  */
   loadFile(path) {
-    let d, t, e, x, f=0, out=[];
+    let d, t, e, f=0, out=[];
     this.error='';
     try{
-      d=Fs.readFileSync(path);
+      d=Fs.readFileSync(path); d=d.toString('utf8');
       while(f<d.length-1){
-        t=x.indexOf('\n', f);
-        if(t<0){t=x.length-1;}
-        e=x.substring(f, t);
+        t=d.indexOf('\n', f);
+        if(t<0){t=d.length-1;}
+        e=d.substring(f, t);
         out.push(e);
         f=t+1;
       }
     }catch(e) {
       this.error=e; out=[];
     }
+    return out;
+  }
+/**
+ * パラメータを展開
+ * @param  {String} ln パラメタを含む文字列
+ * @param  {String} dt パラメタデータ
+ * @return {String}    展開後データ
+ * @method
+ */
+  expand(ln, dt) {
+    let i, c, sw=0, out='', cc, key='';
+    if(!ln){return '';}
+    for(i=0; i<ln.length; i++){
+      c=ln.substr(i, 1); cc=ln.substr(i, 2);
+      switch(sw){
+      case 0:
+        switch(cc){
+        case '%{': sw=1; i++; key=''; break;
+        default: if(cc>'%0' && cc<'%9'){sw=9;}else{out+=c;} break;
+        } break;
+      case 1:
+        if(c=='}'){
+          if(dt[key]!==undefined){out+=dt[key];}
+          sw=0;
+        }else{
+          key+=c;
+        } break;
+      }
+    }
+    return out;
+  }
+/**
+ * スペースによる分解
+ * @param  {String} x 対象文字列
+ * @return {Array}    分解後要素配列
+ * @method
+ */
+  spacedelimit(x) {
+    let i, out=[], e='';
+    for(i=0; i<x.length; i++){
+      if(x[i]!=' '){e+=x[i];}
+      else{if(e){out.push(e); e='';}}
+    }
+    if(e){out.push(e);}
     return out;
   }
 }

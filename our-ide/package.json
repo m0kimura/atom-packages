@@ -20,6 +20,7 @@
     "ansi-to-html": "^0.6.3",
     "atom-space-pen-views": "^2.2.0",
     "csv": "^1.1.1",
+    "event-kit": "^2.3.0",
     "jquery": "^3.2.1",
     "ke-procom": "file:///home/kimura/github/ke-procom",
     "space-pen": "^5.1.2"

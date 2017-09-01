@@ -5,6 +5,7 @@ spawn = cp.spawn
 fs = require('fs')
 url = require('url')
 p = require('path')
+lc = require('./our-launcher.js')
 cs = require('./csv-treat.js')
 
 OurIdeView = require './our-ide-view'
@@ -102,6 +103,7 @@ class OurIde
     atom.commands.add 'atom-workspace', 'our-ide:menu', => @show()
     atom.commands.add 'atom-workspace', 'our-ide:file', => @run(false)
     atom.commands.add 'atom-workspace', 'our-ide:ticket', => @ticket()
+    atom.commands.add 'atom-workspace', 'our-ide:history', => @history()
     atom.commands.add 'atom-workspace', 'our-ide:hours', => @hours()
     atom.commands.add 'atom-workspace', 'our-ide:selection', => @run(true)
     atom.commands.add 'atom-workspace', 'our-ide:stop', => @stop()
@@ -110,85 +112,124 @@ class OurIde
       atom.clipboard.write(window.getSelection().toString())
     ##
     home = process.env.HOME
-    @menus = @getJson(home + '/.atom/our-ide.json')
+    user = process.env.USER
+    @launcher=new lc(user, home)
+    @menus=@launcher.getMenus()
     if @menus.automation
       @automation()
     ##
   ##
 
   automation: () ->
-    try
-      user = process.env.USER
-      home = process.env.HOME
-      dt = cp.execSync('./xaProcom automation userenv '+user)
-      dt = JSON.parse(dt)
-      ba = fs.readFileSync(home+'/.userenv')
-      ba = JSON.parse(ba)
-      bt = {}
-      f= 0; t = ba.indexOf('\n'); if t < 0 then t = ba.length
-      while f < ba.length
-        x = ba.substring(f, t); a=x.split('=')
-        if a[0]
-          bt[a[0]]=a[1]
-          f=t+1
-          t=ba.indexOf('\n', f); if t<0 then t=ba.length
-        ##
-      ##
-      out=''
-      for key, value in dt
-        out+=key+'='+value+'\n'
-      ##
-      for key, value in ba
-        if !dt[key]
-          out+=key+'='+value+'\n'
-        ##
-      ##
-      fs.writeFileSync(home+'/.userenv')
-      cp.execSync('source xsSetenv .userenv')
+    if @launcher.userenv()
       atom.notifications.addInfo('自動初期設定しました。')
-      dt = cp.execSync('./xaProcom automation xsAuto '+user)
-      out=''
-      dt = JSON.parse(dt)
-      for x in dt
-        out+=x+'\n'
-      ##
-      fs.writeFileSync(home+'/bin/xsAuto')
-      cp.execSync('chmod +x '+home+'/bin/xsAuto')
-      cp.exec('xsAuto')
-    catch e
-      atom.notifications.addError('自動初期処理ができませんでした。\n'+e)
+    else
+      atom.notifications.addError('自動初期設定ができませんでした。\n'+e)
+    ##
+    if @launcher.autoexec()
+      atom.notifications.addInfo('自動初期処理を実行しました。')
+    else
+      atom.notifications.addError('自動初期処理が実行できませんでした。\n'+e)
     ##
   ##
 
   show: () ->
-    editor = atom.workspace.getActiveTextEditor()
+    me = this
+    try
+      editor = atom.workspace.getActiveTextEditor()
+    catch e
+      editor = false
     home = process.env.HOME
-    menu = @solveDepend(editor)
-    view = new OurIdeView(@menus[menu])
+    if editor
+      menu = @launcher.solveDepend(editor.getPath())
+    else
+      menu = @menus.main
+    ##
+    if !@menuView
+      @menuView = new OurIdeView()
+      @menuView.onDidSelect (item) ->
+        i=item.n - 1
+        if item.title == 'キャンセル'
+          return
+        if menu[i].command
+          me.runcmd(menu[i].command, menu[i].title)
+        else if x.procedure
+          me.runproc(menu[i])
+        ##
+        console.log('#159', item)
+      ##
+    ##
+    @menuView.show(menu)
+  ##
+
+  runproc: (x) ->
+    switch x.procedure
+      when 'test'
+        atom.notifications.addInfo(x.title+'処理しました。')
+      when 'template'
+        try
+          h = process.env.HOME
+          o = h+x.parameters[1]+x.parameters[0]
+          if ! fs.existsSync(o)
+            r = fs.createReadStream(h+'/テンプレート/'+x.parameters[0])
+            w = fs.createWriteStream(o)
+            r.pipe(w)
+          ##
+          atom.workspace.open(o)
+        catch e
+          atom.notifications.addError('ERROR:'+e)
+      ##
+    ##
   ##
 
   run: (selection) ->
     editor = atom.workspace.getActiveTextEditor()
     return unless editor?
+    editor.save()
     if selection
       cmd = @commandFor(editor, selection)
     else
-      cmd = @localexec(editor)
-      console.log('xx120', cmd)
-      if cmd == 'exit'
+      pa = editor.getPath()
+      if @launcher.filepart(pa)=='.history'
+        cmd = editor.getSelectedText()
+        cmd = cmd.substr(0, cmd.length-1)
+        cmd = cmd.replace('\n', ' && ')
+        @runcmd(cmd, '履歴からの実行')
         return
-      else if cmd == ''
-        cmd = @commandFor(editor, selection)
+      ##
+      {mode, cmd} = @launcher.localexec(pa)
+      if mode=='' && @launcher.modifier(pa)=='tsh'
+        {mode, cmd}=@launcher.templauncher(pa, editor.getCursorScreenPosition())
+      ##
+      if mode=='NG'
+        atom.notifications.addError(@launcher.error)
+        return
+      ##
+      if mode=='exit' || cmd=='exit'
+        return
+      ##
+      if mode=='atom'
+        atom.workspace.open(cmd)
+        return
+      ##
+      if mode=='cmd' && !cmd
+        atom.notifications.addError('対応するコマンドが見つかりませんでした。')
+        return
+        ##
       ##
     ##
     unless cmd?
       console.warn("適切な実行が設定されていません '#{path}'")
       return
+    @runcmd(cmd, editor.getTitle())
+  ##
 
+  runcmd: (cmd, title) ->
+    console.log('#214', cmd)
     if atom.config.get('our-ide.showOutputWindow')
       {pane, view} = @runnerView()
       if not view?
-        view = new OurRunnerView(editor.getTitle())
+        view = new OurRunnerView(title)
         panes = atom.workspace.getPanes()
         dir = atom.config.get('our-ide.paneSplitDirection')
         dirfunc = @splitFuncs[dir] || @splitFuncDefault
@@ -206,10 +247,10 @@ class OurIde
         footer: ->
 
     unless view.mocked
-      view.setTitle(editor.getTitle())
+      view.setTitle(title)
       pane.activateItem(view)
 
-    @execute(cmd, editor, view, selection)
+    @execute(cmd, false, view, false)
   ##
 
   ticket: () ->
@@ -228,169 +269,19 @@ class OurIde
     atom.workspace.open(path)
   ##
 
-  localexec: (editor) ->
-    pa = editor.getPath()
-    part = pa.split('/')
-    path = @userPath(part)
-    file = @filepart(pa)
-#
-# ~/docker
-    if part[3] == 'docker'
-      if part[4] == 'include'
-        return 'dex build ' + part[5]
-      else
-        atom.notifications.addError('ビルドできません。')
-        return 'exit'
-      ##
-    #
-    # cordova
-    else if part[4] == 'cordova'
-      return 'exe cordovaide ' + part[5] + ' ' + part[3] + ' build'
-    else if part[5] == 'cordova'
-      return 'exe cordovaide ' + part[6] + ' ' + part[3] +
-       '/' + part[4] + ' build'
+  history: () ->
+    home=process.env.HOME
+    dt=@launcher.loadFile(home+'/.bash_history')
+    x=''
+    for i of dt
+      x+=dt[i]+'\n'
     ##
-    #
-    # platformio
-    else if part[4] == 'platformio'
-      return 'exe platformio ' + part[5] + ' ' + part[3] + ' build'
-    else if part[5] == 'platformio'
-      return 'exe platformio ' + part[6] + ' ' + part[3] +
-       '/' + part[4] + ' build'
-    ##
-    #
-    # electron
-    else if part[4] == 'electron'
-      return 'exe electron ' + part[5] + ' ' + part[3]
-    else if part[5] == 'electron'
-      return 'exe electron ' + part[6] + ' ' + part[3] + '/' + part[4]
-    ##
-    #
-    # ino
-    else if part[4] == 'esp32'
-      return 'exe espidf ' + part[5] + ' ' + part[3]
-    else if part[5] == 'esp32'
-      return 'exe espidf ' + part[6] + ' ' + part[3] + '/' + part[4]
-    ##
-
-
-    switch @modifier(file)
-      # page
-      when 'page'
-        if part[3] == @menus.websource
-          if part.length == 5
-            b = part[4].split('.')
-            atom.workspace.open('http://localhost/' + b[0] + '.html')
-            return 'exit'
-          ##
-          if part.length == 6
-            b = part[5].split('.')
-            atom.workspace.open(
-              'http://localhost/' + part[4] + '/' + b[0] + '.html'
-            )
-            return 'exit'
-          ##
-          atom.notifications.addError('実行できません。')
-          return 'exit'
-        ##
-      # js
-      when 'js'
-        console.log('js')
-        return 'exe node ' + file + ' ' + path
-      # sh
-      when 'sh'
-        console.log('sh')
-        return pa
-      # jse
-      when 'jse'
-        console.log('jse')
-        return pa
-      # py
-      when 'py'
-        console.log('py')
-        return 'exe python ' + file + ' ' + path
-      # coffee
-      when 'coffee'
-        console.log('coffee')
-        return 'exe coffee ' + file + ' ' + path
-      # aws
-      when 'aws'
-        console.log('aws')
-        return 'exe aws ' + file + ' ' + path
-      when 'tsh'
-        a=@loadFile(pa)
-        p=editor.getCursorScreenPosition()
-        out=''; c=''
-        f=false
-        l=0
-        for x in a
-          console.log x
-        for x in a
-          l++
-          console.log('#329', l, x)
-          if l == p.row + 1
-            console.log('#330', l, p.row+1, x)
-            if x == 'do'
-              f=true
-              console.log('#334')
-            else
-              atom.notifications.addInfo('指定した行がdoではありません')
-            　return 'exit'
-            ##
-          else
-            console.log('#338', x, out)
-            if x == 'end'
-              f = false
-            ##
-            console.log('#342'+f)
-            if f
-              out=c+x; c=' && '
-              console.log('#342')
-            ##
-          ##
-        ##
-        console.log('#344')
-        if f
-          atom.notifications.addInfo('endマークがありません')
-        else
-          console.log '#342', out
-        console.log '#343'
-        return 'exit'
-      # error
-      else
-        atom.notifications.addError('拡張子が対象外です。')
-        return 'exit'
-    ####
-    return 'exit'
-  ##
-
-  solveDepend: (editor) ->
-    pa = editor.getPath()
-    part = pa.split('/')
-    path = @userPath(part)
-    file = @filepart(pa)
-#
-# ~/docker
-    if part[3] == 'docker'
-      return 'main'
-    ##
-#
-# cordova
-    else if part[4] == 'cordova'
-      return 'main'
-    else if part[5] == 'cordova'
-      return 'main'
-    ##
-#
-# platformio
-    else if part[4] == 'platformio'
-      return 'platformio'
-    else if part[5] == 'platformio'
-      return 'platformio'
-    else
-      return 'main'
-    ##
-    return false
+    atom.workspace.open(home+'/.history')
+    .then (editor) ->
+      editor.setText(x)
+      editor.setCursorBufferPosition([dt.length-1, 0])
+    .catch (error) ->
+      atom.notifications.addError('open error :'+error)
   ##
 
   stop: (view) ->
@@ -416,14 +307,13 @@ class OurIde
     view.clear()
 
     args = []
-    if editor.getPath()
-      editor.save()
-#      args.push(editor.getPath()) if !selection
-    console.log("#{cmd}", cmd)
-    splitCmd = cmd.split(/\s+/)
-    if splitCmd.length > 1
-      cmd = splitCmd[0]
-      args = splitCmd.slice(1).concat(args)
+    a=@launcher.spacedelimit(cmd)
+    ##splitCmd = cmd.split(/\s+/)
+    ##if splitCmd.length > 1
+    ##  cmd = splitCmd[0]
+    ##  args = splitCmd.slice(1).concat(args)
+    cmd=a[0]
+    args=a.slice(1).concat(args)
     try
       dir = atom.project.getPaths()[0] || '.'
       try
@@ -431,10 +321,7 @@ class OurIde
           throw new Error("Bad dir")
       catch
         dir = '.'
-      @child = spawn(cmd, args, cwd: dir)
-      console.log('#spawn')
-      console.log(cmd)
-      console.log(args)
+      @child = spawn(cmd, args, {cwd: dir, shell: true, env: process.env})
       @timer = setInterval((-> view.appendFooter('.')), 750)
       currentPid = @child.pid
       @child.on 'error', (err) =>
@@ -464,13 +351,13 @@ class OurIde
       @stop()
 
     startTime = new Date
-    try
-      if selection
-        @child.stdin.write(editor.getLastSelection().getText())
-      else if !editor.getPath()
-        @child.stdin.write(editor.getText())
-      @child.stdin.end()
-    view.footer("Running: #{cmd} (cwd=#{editor.getPath()} pid=#{@child.pid}).")
+#    try
+#      if selection
+#        @child.stdin.write(editor.getLastSelection().getText())
+#      else if !editor.getPath()
+#        @child.stdin.write(editor.getText())
+    @child.stdin.end()
+    view.footer("Running: #{cmd} (pid=#{@child.pid}).")
 
   commandFor: (editor, selection) ->
     # try to find a shebang
@@ -501,136 +388,5 @@ class OurIde
       for view in pane.getItems()
         return {pane: pane, view: view} if view instanceof OurRunnerView
     {pane: null, view: null}
-
-  lastOf: (txt, x) ->
-    i = txt.length - 1
-    while i > -1
-      if txt[i] == x
-        return i
-      ##
-      i--
-    ##
-    return -1
-  ##
-
-  pullDir: (txt) ->
-    i = this.lastOf(txt, '/')
-    return txt.substr(0, i+1)
-  ##
-
-  repby: (txt, x, y) ->
-    out = ''
-    i
-    for i in txt
-      if txt[i] == x
-        out += y
-      else
-        out += txt[i]
-      ##
-    ##
-    return out
-  ##
-
-  separate: (txt, x) ->
-    out = []
-    i
-    out[0] = ''
-    out[1] = ''
-    f=true
-    for i in txt
-      if f && txt[i] == x
-        f = false
-      else
-        if f
-          out[0] += txt[i]
-        else
-          out[1] += txt[i]
-        ##
-      ##
-    ##
-    return out
-  ##
-
-  modifier: (x) ->
-    p = @lastOf(x, '.')
-    if p < 0
-      return ''
-    ##
-    p++
-    return x.substr(p)
-  ##
-
-  filepart: (x) ->
-    p = @lastOf(x, '/')
-    if p < 0
-      return x;
-    ##
-    p++
-    return x.substr(p)
-  ##
-
-  pathpart: (x) ->
-    p = @lastOf(x, '/')
-    if p<0
-      return ''
-    ##
-    return x.substr(0, p+1)
-  ##
-  getJson: (fn) ->
-    try
-      rc = @getFs(fn)
-      if rc
-        return JSON.parse(rc)
-      else
-        return false
-    catch e
-      @error=e
-  ##
-  getFs: (fn) ->
-    @error = ''
-    if @isExist(fn)
-      d = fs.readFileSync(fn).toString()
-      return d
-    else
-      @error = 'file not found file=' + fn
-      return false
-    ##
-  ##
-  isExist: (fn) ->
-    try
-      return fs.existsSync(fn)
-    catch e
-      return false
-    ##
-  ##
-  userPath: (a) ->
-    rc = ''
-    i = 0
-    s = ''
-    for x in a
-      if i > a.length - 2
-        return rc
-      if i > 2
-        rc = rc + s + x
-        s = '/'
-      ##
-      i++
-    ##
-    return rc
-  ##
-  loadFile: (path) ->
-    d=fs.readFileSync(path)
-    f=0
-    out=[]
-    x=' '+d
-    while f<d.length-1
-      t=x.indexOf('\n', f)
-      if t<0 then t=x.length-1
-      e=x.substring(f, t)
-      out.push(e)
-      f=t+1
-    ##
-    return out
-  ##
 ##
 module.exports = new OurIde

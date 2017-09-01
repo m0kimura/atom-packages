@@ -14,6 +14,8 @@ site="http://192.168.1.64:8088"
       -H 'Content-type: application/json' \
       -d "${data}" \
       -k
+  elif [[ $cmd = "history" ]]; then
+    history
   else
     cmd
     read -p "確認" x
