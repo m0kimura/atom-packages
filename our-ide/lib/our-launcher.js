@@ -64,8 +64,8 @@ module.exports=class ourLauncher {
       f=x.command;
       for(i in a){if(a[i]!='*' && a[i]!=part[i]) {f=''; break;}}
       if(f){
-        for(i in a){dt['part'+i]=a[i];}
-        console.log('#58', me.modifier(file), x.filter);
+        for(i in part){dt['part'+i]=part[i];}
+        console.log('#68', me.modifier(file), x.filter, dt);
         return {'mode': 'cmd', 'cmd': me.expand(x.command, dt)};
       }
     }
