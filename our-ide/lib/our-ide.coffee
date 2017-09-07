@@ -141,7 +141,12 @@ class OurIde
       editor = false
     home = process.env.HOME
     if editor
-      menu = @launcher.solveDepend(editor.getPath())
+      pa = editor.getPath()
+      menu = @launcher.solveDepend(pa)
+      dt={}
+      dt.file = @launcher.filepart(pa)
+      dt.path = @launcher.pathpart(pa).substr(home.length)
+      dt.fullpath = pa
     else
       menu = @menus.main
     ##
@@ -152,7 +157,7 @@ class OurIde
         if item.title == 'キャンセル'
           return
         if menu[i].command
-          me.runcmd(menu[i].command, menu[i].title)
+          me.runcmd(me.launcher.expand(menu[i].command, dt), menu[i].title)
         else if x.procedure
           me.runproc(menu[i])
         ##
