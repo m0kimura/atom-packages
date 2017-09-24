@@ -199,18 +199,18 @@ module.exports =
   CoffeeScript:
     "Selection Based":
       command: "coffee"
-      args: (context) -> GrammarUtils.CScompiler.args.concat [context.getCode()]
+      args: (context) -> ['--transpile', '-e', context.getCode()]
     "File Based":
       command: "coffee"
-      args: (context) -> [context.filepath]
+      args: (context) -> ['-t', context.filepath]
 
   "CoffeeScript (Literate)":
     'Selection Based':
       command: 'coffee'
-      args: (context) -> GrammarUtils.CScompiler.args.concat [context.getCode()]
+      args: (context) -> ['-t', '-e', context.getCode()]
     'File Based':
       command: 'coffee'
-      args: (context) -> [context.filepath]
+      args: (context) -> ['-t', context.filepath]
 
   "Common Lisp":
     "File Based":
@@ -326,6 +326,17 @@ module.exports =
     "File Based":
       command: "bash"
       args: (context) -> ['-c', "gfortran '" + context.filepath + "' -ffixed-form -o /tmp/f.out && /tmp/f.out"]
+      
+  "Free Pascal":
+    "Selection Based":
+      command: "fsc"
+      args: (context) ->
+        code = context.getCode()
+        tmpFile = GrammarUtils.createTempFileWithCode(code)
+        [tmpFile]
+    "File Based":
+      command: "fsc"
+      args: (context) -> [context.filepath]
 
   Gherkin:
     "File Based":
@@ -420,18 +431,18 @@ module.exports =
 
   JavaScript:
     "Selection Based":
-      command: "node"
+      command: "babel-node"
       args: (context)  -> ['-e', context.getCode()]
     "File Based":
-      command: "node"
+      command: "babel-node"
       args: (context) -> [context.filepath]
 
   'JavaScript with JSX':
     "Selection Based":
-      command: "node"
+      command: "babel-node"
       args: (context)  -> ['-e', context.getCode()]
     "File Based":
-      command: "node"
+      command: "babel-node"
       args: (context) -> [context.filepath]
 
   "JavaScript for Automation (JXA)":

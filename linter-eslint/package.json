@@ -2,45 +2,46 @@
   "_args": [
     [
       {
-        "raw": "/tmp/d-117628-10040-3zsgrr.lcj0za1yvi/package.tgz",
+        "raw": "/tmp/d-117824-12800-1d1mfyu.wlcubu766r/package.tgz",
         "scope": null,
         "escapedName": null,
         "name": null,
-        "rawSpec": "/tmp/d-117628-10040-3zsgrr.lcj0za1yvi/package.tgz",
-        "spec": "/tmp/d-117628-10040-3zsgrr.lcj0za1yvi/package.tgz",
+        "rawSpec": "/tmp/d-117824-12800-1d1mfyu.wlcubu766r/package.tgz",
+        "spec": "/tmp/d-117824-12800-1d1mfyu.wlcubu766r/package.tgz",
         "type": "local"
       },
-      "/tmp/apm-install-dir-117628-10040-v7ak4n.17xlth85mi"
+      "/tmp/apm-install-dir-117824-12800-wo6pt5.mis2qn0zfr"
     ]
   ],
-  "_from": "../d-117628-10040-3zsgrr.lcj0za1yvi/package.tgz",
-  "_id": "linter-eslint@8.2.1",
+  "_from": "../d-117824-12800-1d1mfyu.wlcubu766r/package.tgz",
+  "_id": "linter-eslint@8.3.2",
   "_inCache": true,
   "_installable": true,
   "_location": "/linter-eslint",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "/tmp/d-117628-10040-3zsgrr.lcj0za1yvi/package.tgz",
+    "raw": "/tmp/d-117824-12800-1d1mfyu.wlcubu766r/package.tgz",
     "scope": null,
     "escapedName": null,
     "name": null,
-    "rawSpec": "/tmp/d-117628-10040-3zsgrr.lcj0za1yvi/package.tgz",
-    "spec": "/tmp/d-117628-10040-3zsgrr.lcj0za1yvi/package.tgz",
+    "rawSpec": "/tmp/d-117824-12800-1d1mfyu.wlcubu766r/package.tgz",
+    "spec": "/tmp/d-117824-12800-1d1mfyu.wlcubu766r/package.tgz",
     "type": "local"
   },
   "_requiredBy": [
     "#USER"
   ],
-  "_resolved": "file:../d-117628-10040-3zsgrr.lcj0za1yvi/package.tgz",
-  "_shasum": "1d75e167bb65a79d6958d044f967c3bc61ef5a03",
+  "_resolved": "file:../d-117824-12800-1d1mfyu.wlcubu766r/package.tgz",
+  "_shasum": "1c5bf9db52171d71870464597143cf64f0a663ec",
   "_shrinkwrap": null,
-  "_spec": "/tmp/d-117628-10040-3zsgrr.lcj0za1yvi/package.tgz",
-  "_where": "/tmp/apm-install-dir-117628-10040-v7ak4n.17xlth85mi",
+  "_spec": "/tmp/d-117824-12800-1d1mfyu.wlcubu766r/package.tgz",
+  "_where": "/tmp/apm-install-dir-117824-12800-wo6pt5.mis2qn0zfr",
   "atomTranspilers": [
     {
       "glob": "{src,spec}/*.js",
       "transpiler": "atom-babel6-transpiler",
       "options": {
+        "setBabelEnv": false,
         "babel": {
           "presets": [
             "node5"
@@ -152,6 +153,12 @@
       "items": {
         "type": "string"
       }
+    },
+    "ignoreFixableRulesWhileTyping": {
+      "title": "Ignore fixable rules while typing",
+      "description": "Have the linter ignore all fixable rules during linting when editing a document. The list is automatically updated on each lint job, and requires at least one run to be populated. Only supported when using ESLint v4+.",
+      "type": "boolean",
+      "default": false
     }
   },
   "dependencies": {
@@ -161,17 +168,16 @@
     "babel-preset-node5": "^12.0.0",
     "consistent-path": "^2.0.1",
     "crypto-random-string": "^1.0.0",
-    "eslint": "^3.6.0",
-    "eslint-rule-documentation": "^1.0.0",
+    "eslint": "^4.6.0",
+    "eslint-rule-documentation": "^1.0.18",
     "resolve-env": "^1.0.0",
     "user-home": "^2.0.0"
   },
   "description": "Lint JavaScript on the fly, using ESLint",
   "devDependencies": {
-    "eslint": "^3.17.0",
-    "eslint-config-airbnb-base": "^11.0.0",
-    "eslint-plugin-import": "^2.2.0",
-    "jasmine-fix": "^1.0.1",
+    "eslint-config-airbnb-base": "^12.0.0",
+    "eslint-plugin-import": "^2.7.0",
+    "jasmine-fix": "^1.3.0",
     "rimraf": "^2.5.4"
   },
   "engines": {
@@ -179,27 +185,34 @@
   },
   "eslintConfig": {
     "rules": {
-      "no-console": 0,
+      "no-console": "off",
       "semi": [
-        2,
+        "error",
         "never"
       ],
-      "func-names": 0,
-      "no-param-reassign": [
-        2,
-        {
-          "props": false
-        }
-      ],
-      "comma-dangle": 0,
-      "no-underscore-dangle": 0,
-      "global-require": 0,
+      "comma-dangle": "off",
+      "global-require": "off",
       "import/no-unresolved": [
-        2,
+        "error",
         {
           "ignore": [
             "atom"
           ]
+        }
+      ],
+      "object-curly-newline": [
+        "error",
+        {
+          "ObjectExpression": {
+            "minProperties": 5,
+            "multiline": true,
+            "consistent": true
+          },
+          "ObjectPattern": {
+            "minProperties": 5,
+            "multiline": true,
+            "consistent": true
+          }
         }
       ]
     },
@@ -237,5 +250,5 @@
     "lint": "eslint .",
     "test": "apm test"
   },
-  "version": "8.2.1"
+  "version": "8.3.2"
 }

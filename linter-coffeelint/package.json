@@ -2,59 +2,64 @@
   "_args": [
     [
       {
-        "raw": "/tmp/d-117621-25126-1onlffn.ajwuj1c3di/package.tgz",
+        "raw": "/tmp/d-117824-12952-vii1fd.g8w6yfogvi/package.tgz",
         "scope": null,
         "escapedName": null,
         "name": null,
-        "rawSpec": "/tmp/d-117621-25126-1onlffn.ajwuj1c3di/package.tgz",
-        "spec": "/tmp/d-117621-25126-1onlffn.ajwuj1c3di/package.tgz",
+        "rawSpec": "/tmp/d-117824-12952-vii1fd.g8w6yfogvi/package.tgz",
+        "spec": "/tmp/d-117824-12952-vii1fd.g8w6yfogvi/package.tgz",
         "type": "local"
       },
-      "/tmp/apm-install-dir-117621-25126-10ycxh1.fed6byy14i"
+      "/tmp/apm-install-dir-117824-12952-1jrx7ra.o9mbe7y14i"
     ]
   ],
-  "_from": "../d-117621-25126-1onlffn.ajwuj1c3di/package.tgz",
-  "_id": "linter-coffeelint@1.2.1",
+  "_from": "../d-117824-12952-vii1fd.g8w6yfogvi/package.tgz",
+  "_id": "linter-coffeelint@1.3.1",
   "_inCache": true,
   "_installable": true,
   "_location": "/linter-coffeelint",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "/tmp/d-117621-25126-1onlffn.ajwuj1c3di/package.tgz",
+    "raw": "/tmp/d-117824-12952-vii1fd.g8w6yfogvi/package.tgz",
     "scope": null,
     "escapedName": null,
     "name": null,
-    "rawSpec": "/tmp/d-117621-25126-1onlffn.ajwuj1c3di/package.tgz",
-    "spec": "/tmp/d-117621-25126-1onlffn.ajwuj1c3di/package.tgz",
+    "rawSpec": "/tmp/d-117824-12952-vii1fd.g8w6yfogvi/package.tgz",
+    "spec": "/tmp/d-117824-12952-vii1fd.g8w6yfogvi/package.tgz",
     "type": "local"
   },
   "_requiredBy": [
     "#USER"
   ],
-  "_resolved": "file:../d-117621-25126-1onlffn.ajwuj1c3di/package.tgz",
-  "_shasum": "017de540424eff8bae7a8be63066cbe080f89d6b",
+  "_resolved": "file:../d-117824-12952-vii1fd.g8w6yfogvi/package.tgz",
+  "_shasum": "c2793b18913c0b8159ade4bea69bf858f3c37247",
   "_shrinkwrap": null,
-  "_spec": "/tmp/d-117621-25126-1onlffn.ajwuj1c3di/package.tgz",
-  "_where": "/tmp/apm-install-dir-117621-25126-10ycxh1.fed6byy14i",
+  "_spec": "/tmp/d-117824-12952-vii1fd.g8w6yfogvi/package.tgz",
+  "_where": "/tmp/apm-install-dir-117824-12952-1jrx7ra.o9mbe7y14i",
   "activationHooks": [
-    "language-coffee-script:grammar-used"
+    "language-coffee-script:grammar-used",
+    "language-iced-coffee-script:grammar-used"
   ],
   "bugs": {
     "url": "https://github.com/AtomLinter/linter-coffeelint/issues"
   },
   "dependencies": {
-    "atom-package-deps": "^4.3.1",
-    "coffeelint": "1.16.0",
-    "resolve": "^1.1.7"
+    "atom-linter": "^10.0.0",
+    "atom-package-deps": "^4.6.0",
+    "coffeelint": "^1.16.0",
+    "ignore": "^3.3.3",
+    "resolve": "^1.4.0",
+    "semver": "^5.4.1"
   },
   "description": "Lint CoffeeScript on the fly, using coffeelint",
   "devDependencies": {
-    "eslint": "^3.8.1",
-    "eslint-config-airbnb-base": "^9.0.0",
-    "eslint-plugin-import": "^2.0.1"
+    "eslint": "^4.3.0",
+    "eslint-config-airbnb-base": "^11.3.1",
+    "eslint-plugin-import": "^2.7.0",
+    "jasmine-fix": "^1.3.0"
   },
   "engines": {
-    "atom": ">=1.0.0 <2.0.0"
+    "atom": ">=1.7.0 <2.0.0"
   },
   "eslintConfig": {
     "extends": "airbnb-base",
@@ -79,17 +84,17 @@
   },
   "homepage": "https://github.com/AtomLinter/linter-coffeelint#readme",
   "license": "MIT",
-  "main": "./lib/init",
+  "main": "./src/index",
   "name": "linter-coffeelint",
   "optionalDependencies": {},
   "package-deps": [
-    "linter"
+    "linter:2.0.0"
   ],
   "private": true,
   "providedServices": {
     "linter": {
       "versions": {
-        "1.0.0": "provideLinter"
+        "2.0.0": "provideLinter"
       }
     }
   },
@@ -99,5 +104,9 @@
     "type": "git",
     "url": "git+https://github.com/AtomLinter/linter-coffeelint.git"
   },
-  "version": "1.2.1"
+  "scripts": {
+    "lint": "eslint .",
+    "test": "apm test"
+  },
+  "version": "1.3.1"
 }

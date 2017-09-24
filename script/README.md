@@ -81,6 +81,7 @@ Currently supported grammars are:
 | Octave                               | Yes        | Yes             | |
 | [Oz](https://mozart.github.io/)      | Yes        | Yes             | |
 | Pandoc Markdown                      | Yes        |                 | Requires the panzer pandoc wrapper https://github.com/msprev/panzer and the pandoc-flavored-markdown language package in Atom https://atom.io/packages/language-pfm |
+| Pascal                               | Yes        | Yes             | Requires [Free Pascal](https://www.freepascal.org/) |
 | Perl                                 | Yes        | Yes             | |
 | Perl 6                               | Yes        | Yes             | |
 | PHP                                  | Yes        | Yes             | |

@@ -49,6 +49,11 @@ export default {
       lintOnFly: true,
       lint: (textEditor) => {
         const filePath = textEditor.getPath();
+        const fileExt = path.extname(filePath);
+        if (fileExt === '.zsh' || fileExt === '.zsh-theme') {
+          // shellcheck does not support zsh
+          return [];
+        }
         const text = textEditor.getText();
         const cwd = path.dirname(filePath);
         const showAll = this.enableNotice;
@@ -63,7 +68,7 @@ export default {
           const messages = [];
           let match = regex.exec(output);
           while (match !== null) {
-            const type = match[3];
+            const type = match[3] !== 'note' ? match[3] : 'info';
             if (showAll || type === 'warning' || type === 'error') {
               const line = Number.parseInt(match[1], 10) - 1;
               const col = Number.parseInt(match[2], 10) - 1;

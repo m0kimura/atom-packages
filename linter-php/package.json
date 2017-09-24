@@ -2,40 +2,43 @@
   "_args": [
     [
       {
-        "raw": "/tmp/d-117617-1501-1o2ytjh.nbnijm7vi/package.tgz",
+        "raw": "/tmp/d-117824-13000-10npbl.45gs2u766r/package.tgz",
         "scope": null,
         "escapedName": null,
         "name": null,
-        "rawSpec": "/tmp/d-117617-1501-1o2ytjh.nbnijm7vi/package.tgz",
-        "spec": "/tmp/d-117617-1501-1o2ytjh.nbnijm7vi/package.tgz",
+        "rawSpec": "/tmp/d-117824-13000-10npbl.45gs2u766r/package.tgz",
+        "spec": "/tmp/d-117824-13000-10npbl.45gs2u766r/package.tgz",
         "type": "local"
       },
-      "/tmp/apm-install-dir-117617-1501-rczx2z.ezh8kkpgb9"
+      "/tmp/apm-install-dir-117824-13000-hziof.w7oqci8uxr"
     ]
   ],
-  "_from": "../d-117617-1501-1o2ytjh.nbnijm7vi/package.tgz",
-  "_id": "linter-php@1.3.2",
+  "_from": "../d-117824-13000-10npbl.45gs2u766r/package.tgz",
+  "_id": "linter-php@1.5.1",
   "_inCache": true,
   "_installable": true,
   "_location": "/linter-php",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "/tmp/d-117617-1501-1o2ytjh.nbnijm7vi/package.tgz",
+    "raw": "/tmp/d-117824-13000-10npbl.45gs2u766r/package.tgz",
     "scope": null,
     "escapedName": null,
     "name": null,
-    "rawSpec": "/tmp/d-117617-1501-1o2ytjh.nbnijm7vi/package.tgz",
-    "spec": "/tmp/d-117617-1501-1o2ytjh.nbnijm7vi/package.tgz",
+    "rawSpec": "/tmp/d-117824-13000-10npbl.45gs2u766r/package.tgz",
+    "spec": "/tmp/d-117824-13000-10npbl.45gs2u766r/package.tgz",
     "type": "local"
   },
   "_requiredBy": [
     "#USER"
   ],
-  "_resolved": "file:../d-117617-1501-1o2ytjh.nbnijm7vi/package.tgz",
-  "_shasum": "aa2e5bfb81c99eeb4f4f3d7350cc8cd14d055fe5",
+  "_resolved": "file:../d-117824-13000-10npbl.45gs2u766r/package.tgz",
+  "_shasum": "9f469c59dc0d252c5f987945109b0dd041ee1313",
   "_shrinkwrap": null,
-  "_spec": "/tmp/d-117617-1501-1o2ytjh.nbnijm7vi/package.tgz",
-  "_where": "/tmp/apm-install-dir-117617-1501-rczx2z.ezh8kkpgb9",
+  "_spec": "/tmp/d-117824-13000-10npbl.45gs2u766r/package.tgz",
+  "_where": "/tmp/apm-install-dir-117824-13000-hziof.w7oqci8uxr",
+  "activationHooks": [
+    "language-php:grammar-used"
+  ],
   "bugs": {
     "url": "https://github.com/AtomLinter/linter-php/issues"
   },
@@ -50,20 +53,27 @@
       "title": "Error Reporting Level Override",
       "description": "Force overriding the `error_reporting` setting from php.ini to `E_ALL` if php.ini is setup to ignore most errors.",
       "default": true
+    },
+    "ignorePhpIni": {
+      "type": "boolean",
+      "title": "Ignore php.ini",
+      "description": "Tell PHP to ignore the php.ini when checking code. This can potentially speed up linting quite a bit, but can also cause PHP to fail to compile your code, breaking linting.",
+      "default": false
     }
   },
   "dependencies": {
-    "atom-linter": "^9.0.0",
+    "atom-linter": "^10.0.0",
     "atom-package-deps": "^4.0.1"
   },
   "description": "Lint PHP on the fly, using php -l",
   "devDependencies": {
-    "eslint": "^3.12.0",
-    "eslint-config-airbnb-base": "^11.0.0",
-    "eslint-plugin-import": "^2.2.0"
+    "eslint": "^4.6.0",
+    "eslint-config-airbnb-base": "^12.0.0",
+    "eslint-plugin-import": "^2.7.0",
+    "jasmine-fix": "^1.3.0"
   },
   "engines": {
-    "atom": ">=1.4.0 <2.0.0"
+    "atom": ">=1.7.0 <2.0.0"
   },
   "eslintConfig": {
     "extends": "airbnb-base",
@@ -79,7 +89,8 @@
       ]
     },
     "env": {
-      "node": true
+      "node": true,
+      "browser": true
     },
     "globals": {
       "atom": true
@@ -110,5 +121,5 @@
     "lint": "eslint .",
     "test": "apm test"
   },
-  "version": "1.3.2"
+  "version": "1.5.1"
 }
