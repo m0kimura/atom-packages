@@ -30,7 +30,7 @@ module.exports=class ourLauncher {
    */
     this.error='';
   }
-/**
+  /**
  * 設定情報の取得
  * @return {Object} 設定情報
  * @method
@@ -38,7 +38,7 @@ module.exports=class ourLauncher {
   getMenus() {
     return this.Config;
   }
-/**
+  /**
  * localexec
  * ローカル実行編集
  * @param  {String} module 編集中モジュールのパス
@@ -79,7 +79,7 @@ module.exports=class ourLauncher {
     }
     return {'mode': '', 'cmd': ''};
   }
-/**
+  /**
  * templauncher
  * テンポラリーコマンドファイル(*.tsh)からの実行
  * @param  {String} path ファイルのパス
@@ -90,15 +90,18 @@ module.exports=class ourLauncher {
   templauncher(path, pos) {
     let me=this, out='', c='', i, x, y;
     let a=this.loadFile(path);
-    console.log(a);
     let f=false;
+    let cmd='';
     for(i in a) {
       x=a[i], y=me.spacedelimit(x); if(!y){y[0]='';}
       console.log(i, pos.row, y[0]);
       if(i==pos.row){
-        if(y[0]=='atom'){return {'mode': 'atom', 'cmd': y[1]};}
-        if(y[0]=='do'){f=true;}
-        else{me.error='指定した行がdoではありません'; return {'mode': 'NG', 'cmd': ''};}
+        switch(y[0]){
+        case 'atom': return {'mode': 'atom', 'cmd': y[1]};
+        case 'do': f=true; cmd=y[0]; break;
+        case 'terminal': f=true; cmd=y[0]; break;
+        default: me.error='指定した行がdo,terminalではありません'; return {'mode': 'NG', 'cmd': ''};
+        }
       }else{
         if(f && y[0]=='end'){f=false; break;}
         if(f){out+=c+x; c=' && ';}
@@ -106,9 +109,10 @@ module.exports=class ourLauncher {
     }
     if(f){me.error='endマークがありません'; return {'mode': 'NG', 'cmd': ''};}
     if(!out){me.error='コマンドがありません'; return {'mode': 'NG', 'cmd': ''};}
-    return {'mode': 'cmd', 'cmd': out};
+    if(cmd=='do') {return {'mode': 'cmd', 'cmd': out};}
+    if(cmd=='terminal') {return {'mode': 'cmd', 'cmd': 'gnome-terminal -e "sh -c \'' + out + '\'"'};}
   }
-/**
+  /**
  * userenv
  * ユーザー環境変数の設定
  * @return {Boolean} true/false OK/NG
@@ -142,7 +146,7 @@ module.exports=class ourLauncher {
     }
     return rc;
   }
-/**
+  /**
  * autoexec
  * 自動実行の実施
  * @return {Boolean} true/false OK/NG
@@ -165,7 +169,7 @@ module.exports=class ourLauncher {
       me.error=e; return false;
     }
   }
-/**
+  /**
  * 状況依存メニューの編集
  * @param  {String} path ファイルのパス
  * @return {Array}       メニューオブジェクトの配列
@@ -191,7 +195,7 @@ module.exports=class ourLauncher {
     for(i in this.Config.main) {out.push(this.Config.main[i]);}
     return out;
   }
-/**
+  /**
  * lastOf
  * テキストを後ろから調べ、指定された文字が発見された位置を返す
  * @param  {String} txt 対象のテキスト
@@ -207,7 +211,7 @@ module.exports=class ourLauncher {
     }
     return -1;
   }
-/**
+  /**
  * pullDir
  * テキストからディレクトリ部分を抽出する
  * @param  {String} txt 対象テキスト
@@ -218,7 +222,7 @@ module.exports=class ourLauncher {
     let i=this.lastOf(txt, '/');
     return txt.substr(0, i+1);
   }
-/**
+  /**
  * repby
  * 対象テキストの文字を置換する
  * @param  {String} txt 対象テキスト
@@ -249,7 +253,7 @@ module.exports=class ourLauncher {
     }
     return out;
   }
-/**
+  /**
  * modifier
  * 修飾子を取り出す
  * @param  {String} x 対象テキスト
@@ -266,7 +270,7 @@ module.exports=class ourLauncher {
     let f=this.lastOf(x, '/'); if(f<0){f=0;}else{f=f+1;}
     return x.substr(f, t);
   }
-/**
+  /**
  * filepart
  * パスからファイル部分を取り出す
  * @param  {String} x パステキスト
@@ -278,7 +282,7 @@ module.exports=class ourLauncher {
     if(p < 0) {return x;}
     p++; return x.substr(p);
   }
-/**
+  /**
  * pathpart
  * パスからフォルダ部分を取り出す
  * @param  {String} x パステキスト
@@ -290,7 +294,7 @@ module.exports=class ourLauncher {
     if(p<0){return '';}
     return x.substr(0, p+1);
   }
-/**
+  /**
  * getJson
  * JSONファイルをオブジェクトに変換
  * @param  {String} fn ファイルパス
@@ -309,7 +313,7 @@ module.exports=class ourLauncher {
       return false;
     }
   }
-/**
+  /**
  * getFs
  * ファイルを読み込みテキストとして取り出す
  * @param  {String} fn ファイルパス
@@ -325,7 +329,7 @@ module.exports=class ourLauncher {
       return false;
     }
   }
-/**
+  /**
  * isExist
  * ファイル存在チェック
  * @param  {String} fn ファイルパス
@@ -341,7 +345,7 @@ module.exports=class ourLauncher {
       return false;
     }
   }
-/**
+  /**
  * userPath
  * ホームホルダ以降を取り出す
  * @param  {String} a パス文字列
@@ -353,7 +357,7 @@ module.exports=class ourLauncher {
     for(i in a) {if(i > 2){rc+='/'+a[i];}}
     return rc;
   }
-/**
+  /**
  * loadFile
  * ファイルを配列として取り出す
  * @param  {String} path 対象ファイルのパス
@@ -377,7 +381,7 @@ module.exports=class ourLauncher {
     }
     return out;
   }
-/**
+  /**
  * パラメータを展開
  * @param  {String} ln パラメタを含む文字列
  * @param  {String} dt パラメタデータ
@@ -406,7 +410,7 @@ module.exports=class ourLauncher {
     }
     return out;
   }
-/**
+  /**
  * スペースによる分解
  * @param  {String} x 対象文字列
  * @return {Array}    分解後要素配列
