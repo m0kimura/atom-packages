@@ -72,7 +72,7 @@ module.exports=class ourLauncher {
     for(i in spec.modifier) {
       x=spec.modifier[i];
       if(me.modifier(file)==x.filter) {
-        dt={'file': me.filepart(pa), 'path': me.pathpart(pa), 'fullpath': pa};
+        dt={'file': file, 'path': me.pathpart(pa), 'fullpath': pa};
         console.log('#64', me.modifier(file), x.filter);
         return {'mode': 'cmd', 'cmd': me.expand(x.command, dt)};
       }
